@@ -1,0 +1,20 @@
+{
+    "standing": {
+        "tilewidth": 12,
+        "tileheight": 12,
+        "startrow": 0,
+        "tilerows": 1,
+        "tilecols": 1,
+        "frames": 1,
+	"framerate": 1
+    },
+    "walking": {
+        "tilewidth": 12,
+        "tileheight": 12,
+        "startrow": 0,
+        "tilerows": 1,
+        "tilecols": 9,
+        "frames": 9,
+        "framerate": 10
+    }
+}
