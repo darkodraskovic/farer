@@ -1,6 +1,6 @@
-function Sprite(name, img, sheet, x, y, w, h) {
+function Sprite(name, tiles, sheet, x, y, w, h) {
     this.name = name;
-    this.img = img;
+    this.tiles = tiles;
     this.x = x;
     this.y = y;
     this.w = w;
