@@ -15,31 +15,31 @@ function Sprite(name, img, sheet, x, y, w, h) {
 
     // Movement & facing directions
     this.facDir = "N";
-    this.moveLeft = false;
-    this.moveRight = false;
-    this.moveUp = false;
-    this.moveDown = false;
+    this.movL = false;
+    this.movR = false;
+    this.movU = false;
+    this.movD = false;
 
     
     this.action = undefined;
     this.sheet = sheet;
 
     this.updateFacingDirection = function () {
-	if (this.moveLeft && this.moveUp)
+	if (this.movL && this.movU)
 	    this.facDir = "NW";
-	else if (this.moveLeft && this.moveDown)
+	else if (this.movL && this.movD)
 	    this.facDir = "SW";
-	else if (this.moveRight && this.moveUp)
+	else if (this.movR && this.movU)
 	    this.facDir = "NE";
-	else if (this.moveRight && this.moveDown)
+	else if (this.movR && this.movD)
 	    this.facDir = "SE";
-	else if (this.moveRight)
+	else if (this.movR)
 	    this.facDir = "E";
-	else if (this.moveLeft)
+	else if (this.movL)
 	    this.facDir = "W";
-	else if (this.moveUp)
+	else if (this.movU)
 	    this.facDir = "N";
-	else if (this.moveDown)
+	else if (this.movD)
 	    this.facDir = "S";
 
     };
@@ -99,22 +99,22 @@ function Sprite(name, img, sheet, x, y, w, h) {
 	}
 	
 	// move player
-	if (this.moveLeft && !this.moveRight) {
+	if (this.movL && !this.movR) {
 	    this.vx = -this.spdX;
 	}
-	if (this.moveRight && !this.moveLeft) {
+	if (this.movR && !this.movL) {
 	    this.vx = this.spdX;
 	}
-	if (this.moveUp && !this.moveDown) {
+	if (this.movU && !this.movD) {
 	    this.vy = -this.spdY;
 	}
-	if (this.moveDown && !this.moveUp) {
+	if (this.movD && !this.movU) {
 	    this.vy = this.spdY;
 	}
-	if (!this.moveLeft && !this.moveRight) {
+	if (!this.movL && !this.movR) {
 	    this.vx = 0;
 	}
-	if (!this.moveUp && !this.moveDown) {
+	if (!this.movU && !this.movD) {
 	    this.vy = 0;
 	}
 

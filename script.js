@@ -90,16 +90,16 @@ var DOWN = 40;
 window.addEventListener("keydown", function(event){
     switch(event.keyCode) {
     case LEFT:
-	player.moveLeft = true;
+	player.movL = true;
 	break;	   	
     case RIGHT:
-	player.moveRight = true;
+	player.movR = true;
 	break;
     case UP:
-	player.moveUp = true;
+	player.movU = true;
 	break;	   
     case DOWN:
-	player.moveDown = true;
+	player.movD = true;
 	break;	   	
     default: 
 	break;
@@ -114,23 +114,23 @@ window.addEventListener("keydown", function(event){
 window.addEventListener("keyup", function(event){
     switch(event.keyCode) {
     case LEFT:
-	player.moveLeft = false;
+	player.movL = false;
 	break;	   	
     case RIGHT:
-	player.moveRight = false;
+	player.movR = false;
 	break;
     case UP:
-	player.moveUp = false;
+	player.movU = false;
 	break;	   
     case DOWN:
-	player.moveDown = false;
+	player.movD = false;
 	break;	   	
     default:
 	break;
     }
 
     player.updateFacingDirection();
-    if (!player.moveUp && !player.moveDown && !player.moveLeft && !player.moveRight) {
+    if (!player.movU && !player.movD && !player.movL && !player.movR) {
 	player.updateAction("standing");
     }
 
