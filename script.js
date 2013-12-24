@@ -136,7 +136,7 @@ function initializeGame() {
     VIEWPORT_HEIGHT = canvas.height / TILE_HEIGHT;
     
     player = new Sprite("player", playerTiles, playerSheet, 256, 256, 12, 12);
-    player.spd = 100;
+    player.spd = 120;
     player.updateAction("standing");
 
     // INPUT SETUP
@@ -241,9 +241,10 @@ function playGame() {
     // 	blockRectangle(player, mapLayers[0][i]);
     // }
 
-    var playerMapX = Math.floor(player.x / TILE_WIDTH);
-    var playerMapY = Math.floor(player.y / TILE_HEIGHT);
+    var playerMapX = Math.floor(player.centerX() / TILE_WIDTH);
+    var playerMapY = Math.floor(player.centerY() / TILE_HEIGHT);
     var collisionCandidates = [];
+    collisionCandidates.push(map2D[0][playerMapX][playerMapY]);    
     if (player.vx < 0) {
 	collisionCandidates.push(map2D[0][playerMapX - 1][playerMapY]);
     } else if (player.vx > 0) {
@@ -275,7 +276,7 @@ function playGame() {
 var initRunning = false;
 // GAME LOOP
 function update() {
-    webkitRequestAnimationFrame(update, canvas);
+    mozRequestAnimationFrame(update, canvas);
     switch(gameState) {
     case LOAD_STATE: console.log("Loading");
 	break;
