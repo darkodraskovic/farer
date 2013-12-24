@@ -59,91 +59,30 @@ function loadHandler() {
 
 }
 
-// PLAYER VARS
-var player;
-
-// SCROLLING
-// objects
-var gameWorld = {
-    x: 0,
-    y: 0
-};
-
 var camera = {
     x: 0,
     y: 0,
     w: canvas.width,
     h: canvas.height,
 
-    updateCamera: function(followee) {
-	// center the camera on the followee & keep it inside the gameworld boundaries
+    updateCamera: function(followee, map) {
+	// center the camera on the followee & keep it inside the map boundaries
 	this.x = Math.max(0, Math.min(
 	    Math.floor((followee.x + followee.w / 2) - this.w / 2),
-	    gameWorld.w - this.w)
+	    map.w - this.w)
 			 );
 
 	this.y = Math.max(0, Math.min(
 	    Math.floor((followee.y + followee.h / 2) - this.h / 2),
-	    gameWorld.h - this.h)
+	    map.h - this.h)
 			 ); 
     }
 
 };
 
-var map = {
-    initMap: function(mapData, canvas) {
-	this.layers = mapData["layers"];
-	this.tilesetsData = mapData["tilesets"];
 
-	this.tileW = mapData["tilewidth"];
-	this.tileH = mapData["tileheight"];
-	this.imgW = mapData["tilesets"][0]["imagewidth"];
-	this.imgH = mapData["tilesets"][0]["imageheight"];	
-	this.tileCols = this.imgW / this.tileW;
-	this.tileRows = this.imgH / this.tileH;
-
-	this.cols = mapData["width"];
-	this.rows = mapData["height"];
-
-	this.viewportW = canvas.width / this.tileW;
-	this.viewportH = canvas.height / this.tileH;
-    },
-
-    generateCollisionLayers: function() {
-	this.collisionLayers = [];
-
-	for (var i = 0; i < this.layers.length; i++) {
-
-	    if (this.layers[i]["name"].indexOf("collision") > -1) {
-		var data = this.layers[i]["data"];
-		this.collisionLayers[this.collisionLayers.length] = [];
-
-		for (var x = 0; x < this.cols; x++) {
-		    this.collisionLayers[this.collisionLayers.length - 1][x] = [];
-    		    for (var y = 0; y < this.rows; y++) {
-			var cellCode = data[y * this.cols + x];
-    			if (cellCode !== 0) {
-			    var scenObj = new SceneryObject();
-			    scenObj.srcX = ((cellCode - 1) % (this.imgW /this.tileW)) * this.tileW;
-			    scenObj.srcY = Math.floor((cellCode - 1) / (this.imgW / this.tileW)) * this.tileH;
-			    scenObj.srcW = this.tileW;
-			    scenObj.srcH = this.tileH;
-			    scenObj.x = x * this.tileW;
-			    scenObj.y = y * this.tileH;
-			    scenObj.w = this.tileW;
-			    scenObj.h = this.tileH;
-			    scenObj.code = cellCode;
-			    this.collisionLayers[this.collisionLayers.length - 1][x][y] = scenObj;
-			} else {
-			    this.collisionLayers[this.collisionLayers.length - 1][x][y] = null;
-			}	    
-    		    }
-		}
-
-	    }
-	}
-    }
-};
+var map;
+var player;
 
 function initializeGame() {    
     player = new Sprite("player", playerTiles, playerSheet, 256, 256, 12, 12);
@@ -153,11 +92,8 @@ function initializeGame() {
     // INPUT SETUP
     setInput(player);
 
-    map.initMap(mapData, canvas);
+    map.initMap(mapData, canvas, groundTiles);
     map.generateCollisionLayers();
-
-    gameWorld.w = map.rows * map.tileW;
-    gameWorld.h = map.cols * map.tileH;
 
     gameState = PLAY_STATE;
 }
@@ -181,7 +117,7 @@ function renderMap(map){
     	    for (k = offset[1]; k <= (offset[1] + map.viewportH); k++) {
     		var cell = k * map.rows + j;
     		if (data[cell] > 0) {
-    		    ctx.drawImage(groundTiles,
+    		    ctx.drawImage(map.img,
     		    		  ((data[cell] - 1) % map.tileCols) * map.tileW,
     				  Math.floor((data[cell] - 1) / map.tileCols) * map.tileH,
     		    		  map.tileW, map.tileH,
@@ -212,36 +148,15 @@ function playGame() {
     player.update();
 
     
-    //    for (var i = 0; i < map2D[0].length; i++) {
-    // 	blockRectangle(player, mapLayers[0][i]);
-    // }
+    var collisionCandidates = findCollisionCandidates(player, map);
 
-    var playerMapX = Math.floor(player.centerX() / map.tileW);
-    var playerMapY = Math.floor(player.centerY() / map.tileH);
-    for (var i = 0; i < map.collisionLayers.length; i++) {
-	var collisionLayer = map.collisionLayers[i];
-	var collisionCandidates = [];
-
-	collisionCandidates.push(collisionLayer[playerMapX][playerMapY]);    
-	if (player.vx < 0) {
-	    collisionCandidates.push(collisionLayer[playerMapX - 1][playerMapY]);
-	} else if (player.vx > 0) {
-	    collisionCandidates.push(collisionLayer[playerMapX + 1][playerMapY]);
-	}
-	if (player.vy < 0) {
-	    collisionCandidates.push(collisionLayer[playerMapX][playerMapY - 1]);
-	} else if (player.vy > 0) {
-	    collisionCandidates.push(collisionLayer[playerMapX][playerMapY + 1]);
-	}
-	for (var j = 0; j < collisionCandidates.length; j++) {
-	    if (collisionCandidates[j] != null)
-		blockRectangle(player, collisionCandidates[j]);
-	}
-
+    for (var j = 0; j < collisionCandidates.length; j++) {
+	if (collisionCandidates[j] != null)
+	    blockRectangle(player, collisionCandidates[j]);
     }
     
     
-    camera.updateCamera(player);
+    camera.updateCamera(player, map);
 
     renderMap(map);
 

@@ -1,5 +1,25 @@
 function findCollisionCandidates(sprite, map) {
+    var collisionCandidates = [];    
+    
+    var spriteMapX = Math.floor(sprite.centerX() / map.tileW);
+    var spriteMapY = Math.floor(sprite.centerY() / map.tileH);
+    for (var i = 0; i < map.collisionLayers.length; i++) {
+	var collisionLayer = map.collisionLayers[i];
 
+	collisionCandidates.push(collisionLayer[spriteMapX][spriteMapY]);    
+	if (sprite.vx < 0) {
+	    collisionCandidates.push(collisionLayer[spriteMapX - 1][spriteMapY]);
+	} else if (sprite.vx > 0) {
+	    collisionCandidates.push(collisionLayer[spriteMapX + 1][spriteMapY]);
+	}
+	if (sprite.vy < 0) {
+	    collisionCandidates.push(collisionLayer[spriteMapX][spriteMapY - 1]);
+	} else if (sprite.vy > 0) {
+	    collisionCandidates.push(collisionLayer[spriteMapX][spriteMapY + 1]);
+	}
+    }
+
+    return collisionCandidates;
 }
 
 function blockRectangle(r1, r2)
