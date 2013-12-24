@@ -123,4 +123,36 @@ function Sprite(name, tiles, sheet, x, y, w, h) {
 
     };
 
+    //Getters
+    this.centerX = function() {
+	return this.x + (this.w / 2);
+    };
+    this.centerY = function() {
+	return this.y + (this.h / 2);
+    };
+    this.halfWidth = function() {
+	return this.w / 2;
+    };
+    this.halfHeight = function() {
+	return this.h / 2;
+    };
 }
+
+function SceneryObject() {
+    this.rotation = 0;
+    this.visible = true;
+
+    //Getters
+    this.centerX = function() {
+	return this.x + (this.w / 2);
+    };
+    this.centerY = function() {
+	return this.y + (this.h / 2);
+    };
+    this.halfWidth = function() {
+	return this.w / 2;
+    };
+    this.halfHeight = function() {
+	return this.h / 2;
+    };
+};
