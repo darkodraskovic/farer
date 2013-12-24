@@ -75,7 +75,7 @@ var TILESHEET_ROWS;
 var VIEWPORT_WIDTH;
 var VIEWPORT_HEIGHT;
 
-var mapLayers = [];
+var map2D = [];
 
 // PLAYER VARS
 var player;
@@ -136,8 +136,7 @@ function initializeGame() {
     VIEWPORT_HEIGHT = canvas.height / TILE_HEIGHT;
     
     player = new Sprite("player", playerTiles, playerSheet, 256, 256, 12, 12);
-    player.spdX = 100;
-    player.spdY = 100;
+    player.spd = 100;
     player.updateAction("standing");
 
     // INPUT SETUP
@@ -147,7 +146,7 @@ function initializeGame() {
     gameWorld.h = MAP_COLS * TILE_WIDTH;
 
 //    console.log(mapLayers.length);
-    generateMap(mapData["layers"][1], mapData["tilesets"][0], mapLayers);
+    generateMap(mapData["layers"][1], mapData["tilesets"][0], map2D);
 
     gameState = PLAY_STATE;
 }
@@ -168,6 +167,7 @@ function generateMap(layerData, tileset, layers) {
 
     
     for (var x = 0; x < COLS; x++) {
+	layers[layers.length - 1][x] = [];
     	for (var y = 0; y < ROWS; y++) {
 	    var cellCode = cells[y * COLS + x];
     	    if (cellCode !== 0) {
@@ -181,7 +181,9 @@ function generateMap(layerData, tileset, layers) {
 		scenObj.w = TILE_W;
 		scenObj.h = TILE_H;
 		scenObj.code = cellCode;
-		layers[layers.length - 1].push(scenObj);
+		layers[layers.length - 1][x][y] = scenObj;
+	    } else {
+		layers[layers.length - 1][x][y] = null;
 	    }	    
     	}
     }
@@ -234,9 +236,29 @@ function renderMap(){
 function playGame() {
     player.update();
 
-    for (var i = 0; i < mapLayers[0].length; i++) {
-	blockRectangle(player, mapLayers[0][i]);
+    
+    //    for (var i = 0; i < map2D[0].length; i++) {
+    // 	blockRectangle(player, mapLayers[0][i]);
+    // }
+
+    var playerMapX = Math.floor(player.x / TILE_WIDTH);
+    var playerMapY = Math.floor(player.y / TILE_HEIGHT);
+    var collisionCandidates = [];
+    if (player.vx < 0) {
+	collisionCandidates.push(map2D[0][playerMapX - 1][playerMapY]);
+    } else if (player.vx > 0) {
+	collisionCandidates.push(map2D[0][playerMapX + 1][playerMapY]);
     }
+    if (player.vy < 0) {
+	collisionCandidates.push(map2D[0][playerMapX][playerMapY - 1]);
+    } else if (player.vy > 0) {
+	collisionCandidates.push(map2D[0][playerMapX][playerMapY + 1]);
+    }
+    for (var i = 0; i < collisionCandidates.length; i++) {
+	if (collisionCandidates[i] != null)
+	    blockRectangle(player, collisionCandidates[i]);
+    }
+    
     
     camera.updateCamera(player);
 
@@ -253,7 +275,7 @@ function playGame() {
 var initRunning = false;
 // GAME LOOP
 function update() {
-    mozRequestAnimationFrame(update, ctx);
+    webkitRequestAnimationFrame(update, canvas);
     switch(gameState) {
     case LOAD_STATE: console.log("Loading");
 	break;

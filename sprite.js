@@ -9,8 +9,7 @@ function Sprite(name, tiles, sheet, x, y, w, h) {
     this.vy = 0;
     this.ax = 0;
     this.ay = 0;
-    this.spdX = 0;
-    this.spdY = 0;
+    this.spd = 0;
     this.rotation = 0;
 
     // Movement & facing directions
@@ -100,16 +99,16 @@ function Sprite(name, tiles, sheet, x, y, w, h) {
 	
 	// move player
 	if (this.movL && !this.movR) {
-	    this.vx = -this.spdX;
+	    this.vx = -this.spd;
 	}
 	if (this.movR && !this.movL) {
-	    this.vx = this.spdX;
+	    this.vx = this.spd;
 	}
 	if (this.movU && !this.movD) {
-	    this.vy = -this.spdY;
+	    this.vy = -this.spd;
 	}
 	if (this.movD && !this.movU) {
-	    this.vy = this.spdY;
+	    this.vy = this.spd;
 	}
 	if (!this.movL && !this.movR) {
 	    this.vx = 0;
