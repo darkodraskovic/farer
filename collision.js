@@ -1,3 +1,7 @@
+function findCollisionCandidates(sprite, map) {
+
+}
+
 function blockRectangle(r1, r2)
 {
     //A variable to tell us which side the collision is occurring on
