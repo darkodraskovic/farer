@@ -41,12 +41,17 @@ function Sprite(name, x, y, w, h) {
 
     };
 
-    this.updateAction = function(action) {
-	this.action = action;
+    this.updateAction = function() {
+	if(this.movL || this.movR || this.movU || this.movD) {
+	    this.action = "walking";
+	} else 	if (!this.movU && !this.movD && !this.movL && !this.movR) {
+	    this.action = "standing";
+	}
     };
 
 
     this.update = function() {
+
 	switch(this.facDir) {
 	case "N": this.rotation = 0;
 	    break;

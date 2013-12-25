@@ -28,9 +28,7 @@ function setInput(player) {
 	}
 	
 	player.updateFacingDirection();
-	if(player.movL || player.movR || player.movU || player.movD)
-	    player.updateAction("walking");
-
+	player.updateAction();
     });
 
     window.addEventListener("keyup", function(event){
@@ -52,10 +50,7 @@ function setInput(player) {
 	}
 
 	player.updateFacingDirection();
-	if (!player.movU && !player.movD && !player.movL && !player.movR) {
-	    player.updateAction("standing");
-	}
-
+	player.updateAction();
     });
 
 }
