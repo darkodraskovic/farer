@@ -17,7 +17,7 @@ var assetsToLoad = [];
 var loadedAssets = 0;
 
 var mapData;
-var playerSheet;
+var spriteSheetData;
 
 var loadData = function() {
     assetsToLoad.push(mapData);
@@ -29,11 +29,11 @@ var loadData = function() {
     };
     xhr.send();
 
-    assetsToLoad.push(playerSheet);    
-    xhr.open("GET", "data/playerSpriteSheet.json", false);
+    assetsToLoad.push(spriteSheetData);    
+    xhr.open("GET", "data/spriteSheetData.json", false);
     xhr.onload = function() {
 	loadHandler();
-	playerSheet = JSON.parse(this.responseText);
+	spriteSheetData = JSON.parse(this.responseText);
     };
     xhr.send();
 
@@ -85,7 +85,7 @@ var map;
 var player;
 
 function initializeGame() {    
-    player = new Sprite("player", playerTiles, playerSheet, 256, 256, 12, 12);
+    player = new Sprite("player", playerTiles, spriteSheetData, 256, 256, 12, 12);
     player.spd = 120;
     player.updateAction("standing");
 
@@ -115,7 +115,7 @@ function renderMap(map){
     	var data = map.layers[i]["data"];
     	for (j = offset[0]; j <= (offset[0] + map.viewportW); j++) {
     	    for (k = offset[1]; k <= (offset[1] + map.viewportH); k++) {
-    		var cell = k * map.rows + j;
+    		var cell = k * map.cols + j;
     		if (data[cell] > 0) {
     		    ctx.drawImage(map.img,
     		    		  ((data[cell] - 1) % map.tileCols) * map.tileW,

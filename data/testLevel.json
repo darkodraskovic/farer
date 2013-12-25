@@ -42,7 +42,7 @@
  "tilesets":[
         {
          "firstgid":1,
-         "image":"..\/images\/groundTiles.png",
+         "image":"..\/..\/..\/..\/..\/..\/..\/..\/..\/media\/sf_Radovi\/AppDev\/Emacs\/JS\/FromScratch\/Farer\/images\/groundTiles.png",
          "imageheight":672,
          "imagewidth":320,
          "margin":0,

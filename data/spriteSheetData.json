@@ -16,5 +16,15 @@
         "tilecols": 9,
         "frames": 9,
         "framerate": 10
+    },
+
+    "player": {
+	"image": "playerTiles.png",
+	"imagewidth": 108,
+	"imageheight": 12,
+	"tilewidth": 12,
+	"tileheight": 12,
+	"cols": 9,
+	"rows": 1
     }
 }

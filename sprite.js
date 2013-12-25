@@ -62,7 +62,8 @@ function Sprite(name, tiles, sheet, x, y, w, h) {
 	    this.updateAnimation();
 	}
     };
-    
+
+
     this.updateAnimation = function() {
 	this.srcX
 	    = (this.currentFrame % this.tileCols) * this.tileW;
