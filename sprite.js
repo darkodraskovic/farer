@@ -17,7 +17,6 @@ function Sprite(name, x, y, w, h) {
     this.movR = false;
     this.movU = false;
     this.movD = false;
-
     
     this.action = undefined;
 

@@ -10,14 +10,13 @@ var LOAD_STATE = 0;
 var INITIALIZE_STATE = 1;
 var PLAY_STATE = 2;
 
-var gameState = LOAD_STATE;
+var gameState = INITIALIZE_STATE;
 
 // LOAD DATA
 var assetsToLoad = [];
 var loadedAssets = 0;
 
 var mapData;
-var spriteSheetData;
 var manSheet;
 
 var loadData = function() {
@@ -27,15 +26,6 @@ var loadData = function() {
     xhr.onload = function() {
 	loadHandler();
 	mapData = JSON.parse(this.responseText);
-    };
-    xhr.send();
-
-
-    assetsToLoad.push(spriteSheetData);    
-    xhr.open("GET", "data/spriteSheetData.json", false);
-    xhr.onload = function() {
-	loadHandler();
-	spriteSheetData = JSON.parse(this.responseText);
     };
     xhr.send();
 
@@ -62,10 +52,12 @@ playerTiles.src = "images/playerTiles.png";
 assetsToLoad.push(playerTiles);
 
 function loadHandler() {
-    loadedAssets++;
-    if (loadedAssets >= 5) {
-	gameState = INITIALIZE_STATE;
-    }
+    // loadedAssets++;
+    // if (loadedAssets >= assetsToLoad.length) {
+    // 	gameState = INITIALIZE_STATE;
+    // }
+    // console.log("loadedAssets: " + loadedAssets);
+    // console.log("assetsToLoad: " + assetsToLoad.length);
 
 }
 
@@ -198,7 +190,8 @@ function update() {
     }
 	console.log("Initializing");
 	break;
-    case PLAY_STATE: 
+    case PLAY_STATE:
+	console.log("Playing");
 	playGame();
 	break;
     default: break;
