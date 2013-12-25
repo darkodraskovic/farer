@@ -18,6 +18,7 @@ var loadedAssets = 0;
 
 var mapData;
 var spriteSheetData;
+var manSheet;
 
 var loadData = function() {
     assetsToLoad.push(mapData);
@@ -29,11 +30,20 @@ var loadData = function() {
     };
     xhr.send();
 
+
     assetsToLoad.push(spriteSheetData);    
     xhr.open("GET", "data/spriteSheetData.json", false);
     xhr.onload = function() {
 	loadHandler();
 	spriteSheetData = JSON.parse(this.responseText);
+    };
+    xhr.send();
+
+    assetsToLoad.push(manSheet);    
+    xhr.open("GET", "data/manSheet.json", false);
+    xhr.onload = function() {
+	loadHandler();
+	manSheet = JSON.parse(this.responseText);
     };
     xhr.send();
 
@@ -53,7 +63,7 @@ assetsToLoad.push(playerTiles);
 
 function loadHandler() {
     loadedAssets++;
-    if (loadedAssets >= 4) {
+    if (loadedAssets >= 5) {
 	gameState = INITIALIZE_STATE;
     }
 
@@ -83,11 +93,15 @@ var camera = {
 
 var map;
 var player;
+var playerAnimator;
 
 function initializeGame() {    
-    player = new Sprite("player", playerTiles, spriteSheetData, 256, 256, 12, 12);
+    player = new Sprite("player", 256, 256, 12, 12);
     player.spd = 120;
     player.updateAction("standing");
+
+    playerAnimator = new Animator(playerTiles, manSheet, player);
+    playerAnimator.parseImageData();
 
     // INPUT SETUP
     setInput(player);
@@ -95,7 +109,9 @@ function initializeGame() {
     map.initMap(mapData, canvas, groundTiles);
     map.generateCollisionLayers();
 
+    console.log("Playing");
     gameState = PLAY_STATE;
+
 }
 
 
@@ -132,11 +148,12 @@ function renderMap(map){
 
 
     // render the PC
+    var animator = player.animator;
     ctx.translate(player.x + player.w / 2, player.y + player.h / 2);
     ctx.rotate(player.rotation * Math.PI / 180);
-    ctx.drawImage(player.tiles,
-    		  player.srcX, player.srcY, player.tileW, player.tileH,
-    		  -player.tileW / 2, -player.tileH / 2, player.tileW, player.tileH
+    ctx.drawImage(animator.image,
+    		  animator.srcX, animator.srcY, animator.tileW, animator.tileH,
+    		  -animator.tileW / 2, -animator.tileH / 2, animator.tileW, animator.tileH
     		 );
 
     ctx.restore();
@@ -145,9 +162,9 @@ function renderMap(map){
 
 
 function playGame() {
+    
     player.update();
 
-    
     var collisionCandidates = findCollisionCandidates(player, map);
 
     for (var j = 0; j < collisionCandidates.length; j++) {
@@ -160,8 +177,8 @@ function playGame() {
 
     renderMap(map);
 
-    if (tpsCounter % (TPS / player.framerate) === 0) {
-	player.updateAnimation();
+    if (tpsCounter % (TPS / playerAnimator.frameRate) === 0) {
+	playerAnimator.play(player.action);
     }
 
     if (++tpsCounter > 60)

@@ -1,0 +1,23 @@
+{
+    "image": {
+	"name": "playerTiles.png",
+	"imagewidth": 108,
+	"imageheight": 12,
+	"tilewidth": 12,
+	"tileheight": 12,
+	"cols": 9,
+	"rows": 1
+    },
+    "sequences": {
+	"walking": {
+	    "frames": [0, 1, 2, 3, 4, 5, 6, 7, 8],
+	    "framerate": 10,
+	    "loop": true
+	},
+	"standing": {
+	    "frames": [0],
+	    "framerate": 10,
+	    "loop": true
+	}
+    }
+}

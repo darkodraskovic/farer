@@ -1,6 +1,5 @@
-function Sprite(name, tiles, sheet, x, y, w, h) {
+function Sprite(name, x, y, w, h) {
     this.name = name;
-    this.tiles = tiles;
     this.x = x;
     this.y = y;
     this.w = w;
@@ -21,7 +20,6 @@ function Sprite(name, tiles, sheet, x, y, w, h) {
 
     
     this.action = undefined;
-    this.sheet = sheet;
 
     this.updateFacingDirection = function () {
 	if (this.movL && this.movU)
@@ -42,40 +40,11 @@ function Sprite(name, tiles, sheet, x, y, w, h) {
 	    this.facDir = "S";
 
     };
-    
+
     this.updateAction = function(action) {
-	if (this.action == action) {
-	    return;
-	}
-	else {
-	    this.action = action;
-	    
-	    this.currentFrame = 0;
-	    this.tileW = this.sheet[this.action]["tilewidth"];
-	    this.tileH = this.sheet[this.action]["tileheight"];
-	    this.startRow = this.sheet[this.action]["startrow"];
-	    this.tileRows = this.sheet[this.action]["tilerows"];
-	    this.tileCols = this.sheet[this.action]["tilecols"];
-	    this.numOfFrames = this.sheet[this.action]["frames"];
-	    this.framerate = this.sheet[this.action]["framerate"];
-
-	    this.updateAnimation();
-	}
+	this.action = action;
     };
 
-
-    this.updateAnimation = function() {
-	this.srcX
-	    = (this.currentFrame % this.tileCols) * this.tileW;
-	this.srcY
-	    = Math.floor((this.currentFrame / this.tileCols) + this.startRow) * this.tileH;
-
-	this.currentFrame++;
-
-	if(this.currentFrame >= this.numOfFrames) {
-	    this.currentFrame = 0;
-	}
-    };
 
     this.update = function() {
 	switch(this.facDir) {
