@@ -10,17 +10,16 @@ var LOAD_STATE = 0;
 var INITIALIZE_STATE = 1;
 var PLAY_STATE = 2;
 
-var gameState = INITIALIZE_STATE;
+var gameState = LOAD_STATE;
 
 // LOAD DATA
-var assetsToLoad = [];
+var assetsToLoad = 4;
 var loadedAssets = 0;
 
 var mapData;
 var manSheet;
 
 var loadData = function() {
-    assetsToLoad.push(mapData);
     var xhr = new XMLHttpRequest();
     xhr.open("GET", "data/testLevel.json", false);
     xhr.onload = function() {
@@ -29,7 +28,6 @@ var loadData = function() {
     };
     xhr.send();
 
-    assetsToLoad.push(manSheet);    
     xhr.open("GET", "data/manSheet.json", false);
     xhr.onload = function() {
 	loadHandler();
@@ -44,21 +42,19 @@ loadData();
 var groundTiles = new Image();
 groundTiles.addEventListener("load", loadHandler, false);
 groundTiles.src = "images/groundTiles.png";
-assetsToLoad.push(groundTiles);
+
 
 var playerTiles = new Image();
 playerTiles.addEventListener("load", loadHandler, false);
 playerTiles.src = "images/playerTiles.png";
-assetsToLoad.push(playerTiles);
 
+console.log("Loading");
 function loadHandler() {
-    // loadedAssets++;
-    // if (loadedAssets >= assetsToLoad.length) {
-    // 	gameState = INITIALIZE_STATE;
-    // }
-    // console.log("loadedAssets: " + loadedAssets);
-    // console.log("assetsToLoad: " + assetsToLoad.length);
-
+    loadedAssets++;
+    if (loadedAssets >= assetsToLoad) {
+    	gameState = INITIALIZE_STATE;
+	console.log("Initializing");
+    }
 }
 
 var camera = {
@@ -101,9 +97,9 @@ function initializeGame() {
     map.initMap(mapData, canvas, groundTiles);
     map.generateCollisionLayers();
 
-    console.log("Playing");
     gameState = PLAY_STATE;
 
+    console.log("Playing");    
 }
 
 
@@ -182,16 +178,14 @@ var initRunning = false;
 function update() {
     mozRequestAnimationFrame(update, canvas);
     switch(gameState) {
-    case LOAD_STATE: console.log("Loading");
+    case LOAD_STATE: 
 	break;
     case INITIALIZE_STATE: if (!initRunning) {
 	initRunning = true;
 	initializeGame();
     }
-	console.log("Initializing");
 	break;
     case PLAY_STATE:
-	console.log("Playing");
 	playGame();
 	break;
     default: break;

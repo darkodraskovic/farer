@@ -37,7 +37,6 @@ function Sprite(name, x, y, w, h) {
 	    this.facDir = "N";
 	else if (this.movD)
 	    this.facDir = "S";
-
     };
 
     this.updateAction = function() {

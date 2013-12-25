@@ -32,8 +32,6 @@ var Animator = function(image, sheet, sprite) {
 	this.srcX = (frames[this.currentFrame] % this.cols) * this.tileW;
 	this.srcY = Math.floor(frames[this.currentFrame] / this.cols) * this.tileH;
 
-//	console.log("srcX: " + this.srcX + "; srcY: " + this.srcY);
-	
 	this.currentFrame++;
 	
 	if (this.loop && this.currentFrame >= frames.length)
