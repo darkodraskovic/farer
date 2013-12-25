@@ -13,11 +13,13 @@ var PLAY_STATE = 2;
 var gameState = LOAD_STATE;
 
 // LOAD DATA
-var assetsToLoad = 4;
+var assetsToLoad = 7;
 var loadedAssets = 0;
 
 var mapData;
 var manSheet;
+var platformerSheet;
+var platformerMap;
 
 var loadData = function() {
     var xhr = new XMLHttpRequest();
@@ -35,6 +37,20 @@ var loadData = function() {
     };
     xhr.send();
 
+    xhr.open("GET", "data/platformerSheet.json", false);
+    xhr.onload = function() {
+	loadHandler();
+	platformerSheet = JSON.parse(this.responseText);
+    };
+    xhr.send();
+
+    xhr.open("GET", "data/platformerMap.json", false);
+    xhr.onload = function() {
+	loadHandler();
+	platformerMap = JSON.parse(this.responseText);
+    };
+    xhr.send();
+
 };
 
 loadData();
@@ -47,6 +63,15 @@ groundTiles.src = "images/groundTiles.png";
 var playerTiles = new Image();
 playerTiles.addEventListener("load", loadHandler, false);
 playerTiles.src = "images/playerTiles.png";
+
+var raiserTiles = new Image();
+raiserTiles.addEventListener("load", loadHandler, false);
+raiserTiles.src = "images/raiser_anim.png";
+
+var platformerTiles = new Image();
+platformerTiles.addEventListener("load", loadHandler, false);
+platformerTiles.src = "images/platformertiles.png";
+
 
 console.log("Loading");
 function loadHandler() {
@@ -84,18 +109,39 @@ var player;
 var playerAnimator;
 
 function initializeGame() {    
-    player = new Sprite("player", 256, 256, 12, 12);
-    player.spd = 120;
-    player.updateAction("standing");
+    // player = new Sprite("player", 256, 256, 12, 12);
+    // player.forceX = 120;
+    // player.forceY = 120;
+    // player.updateAction();
 
-    playerAnimator = new Animator(playerTiles, manSheet, player);
+    // playerAnimator = new Animator(playerTiles, manSheet, player);
+    // playerAnimator.parseImageData();
+
+
+
+    player = new PlatformerSprite();
+    player.x = 128;
+    player.y = 256;
+    player.w = 32;
+    player.h = 32;
+    player.forceX = 120;
+    player.forceY = 400;
+    player.ay = 16;
+    player.updateAction();
+
+    playerAnimator = new Animator(raiserTiles, platformerSheet, player);
     playerAnimator.parseImageData();
+
 
     // INPUT SETUP
     setInput(player);
 
-    map.initMap(mapData, canvas, groundTiles);
+    // map.initMap(mapData, canvas, groundTiles);
+    // map.generateCollisionLayers();
+
+    map.initMap(platformerMap, canvas, platformerTiles);
     map.generateCollisionLayers();
+
 
     gameState = PLAY_STATE;
 
@@ -138,7 +184,8 @@ function renderMap(map){
     // render the PC
     var animator = player.animator;
     ctx.translate(player.x + player.w / 2, player.y + player.h / 2);
-    ctx.rotate(player.rotation * Math.PI / 180);
+    if (player.rotation != 0)
+	ctx.rotate(player.rotation * Math.PI / 180);
     ctx.drawImage(animator.image,
     		  animator.srcX, animator.srcY, animator.tileW, animator.tileH,
     		  -animator.tileW / 2, -animator.tileH / 2, animator.tileW, animator.tileH
@@ -148,16 +195,25 @@ function renderMap(map){
 
 }
 
-
 function playGame() {
-    
-    player.update();
 
+//    player.updateRotation();
+    player.updateAction();
+    player.updateMovement();
+    
+    
     var collisionCandidates = findCollisionCandidates(player, map);
 
     for (var j = 0; j < collisionCandidates.length; j++) {
-	if (collisionCandidates[j] != null)
-	    blockRectangle(player, collisionCandidates[j]);
+	if (collisionCandidates[j] != null) {
+	    var collisionSide = blockRectangle(player, collisionCandidates[j]);
+	    if (collisionSide === "bottom") {
+		player.vy = 0;
+		player.isJumping = false;
+	    } else if (collisionSide === "top") {
+		player.vy = 0;
+	    }
+	}
     }
     
     
@@ -167,6 +223,9 @@ function playGame() {
 
     if (tpsCounter % (TPS / playerAnimator.frameRate) === 0) {
 	playerAnimator.play(player.action);
+
+	// console.log("player.action: " + player.action);
+	// console.log("player.isJumping: " + player.isJumping);	
     }
 
     if (++tpsCounter > 60)

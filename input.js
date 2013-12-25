@@ -28,7 +28,6 @@ function setInput(player) {
 	}
 	
 	player.updateFacingDirection();
-	player.updateAction();
     });
 
     window.addEventListener("keyup", function(event){
@@ -50,7 +49,6 @@ function setInput(player) {
 	}
 
 	player.updateFacingDirection();
-	player.updateAction();
     });
 
 }
