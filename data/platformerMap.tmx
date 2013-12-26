@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="32" height="16" tilewidth="32" tileheight="32">
  <tileset firstgid="1" name="platformertiles" tilewidth="32" tileheight="32">
-  <image source="../../../../../../../../home/draskovic/Radovi/AppDev/Emacs/JS/FromScratch/FarerTopDown/images/platformertiles.png" width="256" height="96"/>
+  <image source="../images/platformertiles.png" width="256" height="96"/>
  </tileset>
  <layer name="sky" width="32" height="16">
   <data>

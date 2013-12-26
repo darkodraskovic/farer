@@ -82,7 +82,7 @@ function initializeGame() {
     platformerMap.generateCollisionLayers();
 
     // TOPDOWN or PLATFORMER
-    var mode = "platformer"; 
+    var mode = "topdown"; 
 	if (mode === "topdown") {
 	    player = topDownPlayer;
 	playerAnimator = topDownPlayerAnimator;
