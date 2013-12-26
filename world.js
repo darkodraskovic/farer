@@ -1,5 +1,5 @@
-var map = {
-    initMap: function(mapData, canvas, img) {
+function Map() {
+    this.initMap = function(mapData, canvas, img) {
 	this.layers = mapData["layers"];
 	this.tilesetsData = mapData["tilesets"];
 
@@ -19,9 +19,9 @@ var map = {
 
 	this.viewportW = canvas.width / this.tileW;
 	this.viewportH = canvas.height / this.tileH;
-    },
+    };
 
-    generateCollisionLayers: function() {
+    this.generateCollisionLayers = function() {
 	this.collisionLayers = [];
 
 	for (var i = 0; i < this.layers.length; i++) {
@@ -54,6 +54,6 @@ var map = {
 
 	    }
 	}
-    }
+    };
 };
 

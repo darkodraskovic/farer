@@ -22,12 +22,14 @@ function setInput(player) {
 	    break;	   
 	case DOWN:
 	    player.movD = true;
-	    break;	   	
+	    break;
 	default: 
 	    break;
 	}
 	
 	player.updateFacingDirection();
+
+
     });
 
     window.addEventListener("keyup", function(event){

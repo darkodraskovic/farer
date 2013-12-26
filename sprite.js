@@ -13,7 +13,8 @@ function Sprite(name, x, y, w, h) {
     this.rotation = 0;
 
     // Movement & facing directions
-    this.facDir = "E";
+    this.facDir = undefined;
+
     this.movL = false;
     this.movR = false;
     this.movU = false;
@@ -42,8 +43,7 @@ function Sprite(name, x, y, w, h) {
 	    break;
 
 	}
-    };
-    
+    };    
 
     //Getters
     this.centerX = function() {
@@ -63,7 +63,8 @@ function Sprite(name, x, y, w, h) {
 
 // TOPDOWN SPRITE
 function TopDownSprite() {};
-TopDownSprite.prototype = new Sprite("platformer", 0, 0, 0, 0);
+TopDownSprite.prototype = new Sprite("top-down", 0, 0, 0, 0);
+TopDownSprite.prototype.facDir = "E";
 
 TopDownSprite.prototype.updateFacingDirection = function () {
     if (this.movL && this.movU)
@@ -92,7 +93,9 @@ TopDownSprite.prototype.updateAction = function() {
     }
 };
 
-TopDownSprite.prototype.updateMovement = function() {	
+TopDownSprite.prototype.updateMovement = function() {
+    this.updateRotation();
+    
     // move player
     if (this.movL && !this.movR) {
 	this.vx = -this.forceX;

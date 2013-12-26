@@ -13,27 +13,35 @@ var PLAY_STATE = 2;
 var gameState = LOAD_STATE;
 
 // LOAD DATA
-var assetsToLoad = 7;
+var assetsToLoad = 8;
 var loadedAssets = 0;
 
-var mapData;
-var manSheet;
+var topDownMapData;
+var topDownSheet;
+
+var platformerMapData;
 var platformerSheet;
-var platformerMap;
 
 var loadData = function() {
     var xhr = new XMLHttpRequest();
     xhr.open("GET", "data/testLevel.json", false);
     xhr.onload = function() {
 	loadHandler();
-	mapData = JSON.parse(this.responseText);
+	topDownMapData = JSON.parse(this.responseText);
     };
     xhr.send();
 
     xhr.open("GET", "data/manSheet.json", false);
     xhr.onload = function() {
 	loadHandler();
-	manSheet = JSON.parse(this.responseText);
+	topDownSheet = JSON.parse(this.responseText);
+    };
+    xhr.send();
+
+    xhr.open("GET", "data/platformerMap.json", false);
+    xhr.onload = function() {
+	loadHandler();
+	platformerMapData = JSON.parse(this.responseText);
     };
     xhr.send();
 
@@ -44,33 +52,26 @@ var loadData = function() {
     };
     xhr.send();
 
-    xhr.open("GET", "data/platformerMap.json", false);
-    xhr.onload = function() {
-	loadHandler();
-	platformerMap = JSON.parse(this.responseText);
-    };
-    xhr.send();
-
 };
 
 loadData();
 
-var groundTiles = new Image();
-groundTiles.addEventListener("load", loadHandler, false);
-groundTiles.src = "images/groundTiles.png";
+var tdMapTiles = new Image();
+tdMapTiles.addEventListener("load", loadHandler, false);
+tdMapTiles.src = "images/groundTiles.png";
 
 
-var playerTiles = new Image();
-playerTiles.addEventListener("load", loadHandler, false);
-playerTiles.src = "images/playerTiles.png";
+var tdPlayerTiles = new Image();
+tdPlayerTiles.addEventListener("load", loadHandler, false);
+tdPlayerTiles.src = "images/playerTiles.png";
 
-var raiserTiles = new Image();
-raiserTiles.addEventListener("load", loadHandler, false);
-raiserTiles.src = "images/raiser_anim.png";
+var pfPlayerTiles = new Image();
+pfPlayerTiles.addEventListener("load", loadHandler, false);
+pfPlayerTiles.src = "images/raiser_anim.png";
 
-var platformerTiles = new Image();
-platformerTiles.addEventListener("load", loadHandler, false);
-platformerTiles.src = "images/platformertiles.png";
+var pfMapTiles = new Image();
+pfMapTiles.addEventListener("load", loadHandler, false);
+pfMapTiles.src = "images/platformertiles.png";
 
 
 console.log("Loading");
@@ -109,40 +110,53 @@ var player;
 var playerAnimator;
 
 function initializeGame() {    
-    // player = new Sprite("player", 256, 256, 12, 12);
-    // player.forceX = 120;
-    // player.forceY = 120;
-    // player.updateAction();
+    var topDownPlayer = new TopDownSprite();
+    topDownPlayer.forceX = 120;
+    topDownPlayer.forceY = 120;
+    topDownPlayer.x = 256;
+    topDownPlayer.y = 360;
+    topDownPlayer.w = 16;
+    topDownPlayer.h = 16;
 
-    // playerAnimator = new Animator(playerTiles, manSheet, player);
-    // playerAnimator.parseImageData();
+    topDownPlayer.updateAction();
 
+    var topDownPlayerAnimator = new Animator(tdPlayerTiles, topDownSheet, topDownPlayer);
+    topDownPlayerAnimator.parseImageData();
 
+    var platformerPlayer = new PlatformerSprite();
+    platformerPlayer.x = 128;
+    platformerPlayer.y = 256;
+    platformerPlayer.w = 32;
+    platformerPlayer.h = 32;
+    platformerPlayer.forceX = 120;
+    platformerPlayer.forceY = 400;
+    platformerPlayer.ay = 16;
+    platformerPlayer.updateAction();
 
-    player = new PlatformerSprite();
-    player.x = 128;
-    player.y = 256;
-    player.w = 32;
-    player.h = 32;
-    player.forceX = 120;
-    player.forceY = 400;
-    player.ay = 16;
-    player.updateAction();
+    var platformerPlayerAnimator = new Animator(pfPlayerTiles, platformerSheet, platformerPlayer);
+    platformerPlayerAnimator.parseImageData();
 
-    playerAnimator = new Animator(raiserTiles, platformerSheet, player);
-    playerAnimator.parseImageData();
+    player = topDownPlayer;
+    playerAnimator = topDownPlayerAnimator;
 
+    // player = platformerPlayer;
+    // playerAnimator = platformerPlayerAnimator;
 
+    
     // INPUT SETUP
     setInput(player);
 
-    // map.initMap(mapData, canvas, groundTiles);
-    // map.generateCollisionLayers();
+    var topDownMap = new Map();
+    topDownMap.initMap(topDownMapData, canvas, tdMapTiles);
+    topDownMap.generateCollisionLayers();
 
-    map.initMap(platformerMap, canvas, platformerTiles);
-    map.generateCollisionLayers();
+    var platformerMap = new Map();
+    platformerMap.initMap(platformerMapData, canvas, pfMapTiles);
+    platformerMap.generateCollisionLayers();
 
-
+    map = topDownMap;
+//    map = platformerMap;
+    
     gameState = PLAY_STATE;
 
     console.log("Playing");    
@@ -197,10 +211,8 @@ function renderMap(map){
 
 function playGame() {
 
-//    player.updateRotation();
     player.updateAction();
-    player.updateMovement();
-    
+    player.updateMovement();    
     
     var collisionCandidates = findCollisionCandidates(player, map);
 
@@ -223,9 +235,6 @@ function playGame() {
 
     if (tpsCounter % (TPS / playerAnimator.frameRate) === 0) {
 	playerAnimator.play(player.action);
-
-	// console.log("player.action: " + player.action);
-	// console.log("player.isJumping: " + player.isJumping);	
     }
 
     if (++tpsCounter > 60)
