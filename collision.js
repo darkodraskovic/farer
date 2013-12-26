@@ -22,10 +22,10 @@ function findCollisionCandidates(sprite, map) {
     return collisionCandidates;
 }
 
-function blockRectangle(r1, r2)
+function blockRectangle(r1, r2, mask, block)
 {
     // Collision bit mask defines the collision types sprite r1 interacts with
-    if (!(r1.colMask & r2.colType)) {
+    if (mask && !(r1.colMask & r2.colType)) {
 	return "overlap";
     } 
 
@@ -65,14 +65,14 @@ function blockRectangle(r1, r2)
 		    collisionSide = "top";
 		    
 		    //Move the rectangle out of the collision
-		    r1.y = r1.y + overlapY;
+		    if (block) r1.y = r1.y + overlapY;
 		}
 		else 
 		{
 		    collisionSide = "bottom";
 		    
 		    //Move the rectangle out of the collision
-		    r1.y = r1.y - overlapY;
+		    if (block) r1.y = r1.y - overlapY;
 		}
 	    } 
 	    else 
@@ -84,14 +84,14 @@ function blockRectangle(r1, r2)
 		    collisionSide = "left";
 		    
 		    //Move the rectangle out of the collision
-		    r1.x = r1.x + overlapX;
+		    if (block) r1.x = r1.x + overlapX;
 		}
 		else 
 		{
 		    collisionSide = "right";
 		    
 		    //Move the rectangle out of the collision
-		    r1.x = r1.x - overlapX;
+		    if (block) r1.x = r1.x - overlapX;
 		}
 	    } 
 	}
