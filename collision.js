@@ -24,6 +24,11 @@ function findCollisionCandidates(sprite, map) {
 
 function blockRectangle(r1, r2)
 {
+    // Collision bit mask defines the collision types sprite r1 interacts with
+    if (!(r1.colMask & r2.colType)) {
+	return "overlap";
+    } 
+
     //A variable to tell us which side the collision is occurring on
     var collisionSide = "";
     
@@ -104,5 +109,4 @@ function blockRectangle(r1, r2)
     
     return collisionSide;
 }
-
 

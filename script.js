@@ -10,78 +10,9 @@ var LOAD_STATE = 0;
 var INITIALIZE_STATE = 1;
 var PLAY_STATE = 2;
 
+// LOAD
 var gameState = LOAD_STATE;
 
-// LOAD DATA
-var assetsToLoad = 8;
-var loadedAssets = 0;
-
-var topDownMapData;
-var topDownSheet;
-
-var platformerMapData;
-var platformerSheet;
-
-var loadData = function() {
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", "data/testLevel.json", false);
-    xhr.onload = function() {
-	loadHandler();
-	topDownMapData = JSON.parse(this.responseText);
-    };
-    xhr.send();
-
-    xhr.open("GET", "data/manSheet.json", false);
-    xhr.onload = function() {
-	loadHandler();
-	topDownSheet = JSON.parse(this.responseText);
-    };
-    xhr.send();
-
-    xhr.open("GET", "data/platformerMap.json", false);
-    xhr.onload = function() {
-	loadHandler();
-	platformerMapData = JSON.parse(this.responseText);
-    };
-    xhr.send();
-
-    xhr.open("GET", "data/platformerSheet.json", false);
-    xhr.onload = function() {
-	loadHandler();
-	platformerSheet = JSON.parse(this.responseText);
-    };
-    xhr.send();
-
-};
-
-loadData();
-
-var tdMapTiles = new Image();
-tdMapTiles.addEventListener("load", loadHandler, false);
-tdMapTiles.src = "images/groundTiles.png";
-
-
-var tdPlayerTiles = new Image();
-tdPlayerTiles.addEventListener("load", loadHandler, false);
-tdPlayerTiles.src = "images/playerTiles.png";
-
-var pfPlayerTiles = new Image();
-pfPlayerTiles.addEventListener("load", loadHandler, false);
-pfPlayerTiles.src = "images/raiser_anim.png";
-
-var pfMapTiles = new Image();
-pfMapTiles.addEventListener("load", loadHandler, false);
-pfMapTiles.src = "images/platformertiles.png";
-
-
-console.log("Loading");
-function loadHandler() {
-    loadedAssets++;
-    if (loadedAssets >= assetsToLoad) {
-    	gameState = INITIALIZE_STATE;
-	console.log("Initializing");
-    }
-}
 
 var camera = {
     x: 0,
@@ -104,13 +35,18 @@ var camera = {
 
 };
 
-
 var map;
 var player;
 var playerAnimator;
+var platformerPlayer;
+var platformerPlayerAnimator;
+var platformerMap;
+var topDownPlayer;
+var topDownPlayerAnimator;
+var topDownMap;
 
 function initializeGame() {    
-    var topDownPlayer = new TopDownSprite();
+    topDownPlayer = new TopDownSprite();
     topDownPlayer.forceX = 120;
     topDownPlayer.forceY = 120;
     topDownPlayer.x = 256;
@@ -118,22 +54,21 @@ function initializeGame() {
     topDownPlayer.w = 16;
     topDownPlayer.h = 16;
 
-    topDownPlayer.updateAction();
 
-    var topDownPlayerAnimator = new Animator(tdPlayerTiles, topDownSheet, topDownPlayer);
+    topDownPlayerAnimator = new Animator(tdPlayerTiles, topDownSheet, topDownPlayer);
     topDownPlayerAnimator.parseImageData();
 
-    var platformerPlayer = new PlatformerSprite();
+    platformerPlayer = new PlatformerSprite();
     platformerPlayer.x = 128;
     platformerPlayer.y = 256;
     platformerPlayer.w = 32;
     platformerPlayer.h = 32;
     platformerPlayer.forceX = 120;
-    platformerPlayer.forceY = 400;
+    platformerPlayer.forceY = 370;
     platformerPlayer.ay = 16;
-    platformerPlayer.updateAction();
 
-    var platformerPlayerAnimator = new Animator(pfPlayerTiles, platformerSheet, platformerPlayer);
+
+    platformerPlayerAnimator = new Animator(pfPlayerTiles, platformerSheet, platformerPlayer);
     platformerPlayerAnimator.parseImageData();
 
     player = topDownPlayer;
@@ -210,9 +145,8 @@ function renderMap(map){
 }
 
 function playGame() {
-
-    player.updateAction();
-    player.updateMovement();    
+    
+    player.update();
     
     var collisionCandidates = findCollisionCandidates(player, map);
 
@@ -261,4 +195,20 @@ function update() {
 }
 
 update();
+
+// var mode = "platformer";
+// function toggleMode() {
+//     if (mode !== "platformer") {
+// 	mode = "platformer";
+// 	player = platformerPlayer;
+// 	playerAnimator = platformerPlayerAnimator;
+// 	map = platformerMap;
+//     }
+//     else {
+// 	mode = "topdown";
+// 	player = topDownPlayer;
+// 	playerAnimator = topDownPlayerAnimator;
+// 	map = topDownMap;
+//     }
+// }
 

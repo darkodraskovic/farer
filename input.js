@@ -26,10 +26,7 @@ function setInput(player) {
 	default: 
 	    break;
 	}
-	
 	player.updateFacingDirection();
-
-
     });
 
     window.addEventListener("keyup", function(event){

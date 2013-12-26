@@ -1,3 +1,8 @@
+// CONSTS
+var MASK_NONE = 0;
+var MASK_SCENERY = 1;
+var MASK_PLAYER = 2;
+
 function Sprite(name, x, y, w, h) {
     this.name = name;
     this.x = x;
@@ -12,6 +17,9 @@ function Sprite(name, x, y, w, h) {
     this.forceY = 0;
     this.rotation = 0;
 
+    this.colType = MASK_PLAYER;
+    this.colMask = MASK_SCENERY;
+
     // Movement & facing directions
     this.facDir = undefined;
 
@@ -22,29 +30,20 @@ function Sprite(name, x, y, w, h) {
     
     this.action = undefined;
 
+    this.updatePosition = function() {
+	this.vx += this.ax;
+	this.vy += this.ay;
 
-    this.updateRotation = function() {
-	switch(this.facDir) {
-	case "N": this.rotation = 0;
-	    break;
-	case "NE": this.rotation = 45;
-	    break;
-	case "E": this.rotation = 90;
-	    break;
-	case "SE": this.rotation = 135;
-	    break;
-	case "S": this.rotation = 180;
-	    break;
-	case "SW": this.rotation = 225;
-	    break;
-	case "W": this.rotation = 270;
-	    break;
-	case "NW": this.rotation = 315;
-	    break;
+	this.x += Math.floor(this.vx / TPS);
+	this.y += Math.floor(this.vy / TPS);	
+    };
 
-	}
-    };    
-
+    this.update = function() {
+	this.updateAction();
+	this.updateMovement();
+	this.updatePosition();
+    };
+    
     //Getters
     this.centerX = function() {
 	return this.x + (this.w / 2);
@@ -67,22 +66,32 @@ TopDownSprite.prototype = new Sprite("top-down", 0, 0, 0, 0);
 TopDownSprite.prototype.facDir = "E";
 
 TopDownSprite.prototype.updateFacingDirection = function () {
-    if (this.movL && this.movU)
+    if (this.movL && this.movU) {
 	this.facDir = "NW";
-    else if (this.movL && this.movD)
+	this.rotation = 315;
+    } else if (this.movL && this.movD) {
 	this.facDir = "SW";
-    else if (this.movR && this.movU)
+	this.rotation = 225;
+    } else if (this.movR && this.movU) {
 	this.facDir = "NE";
-    else if (this.movR && this.movD)
-	this.facDir = "SE";
-    else if (this.movR)
+	this.rotation = 45;
+    } else if (this.movR && this.movD) {
+	this.facDir = "SE"; 
+	this.rotation = 135;
+    } else if (this.movR) {
 	this.facDir = "E";
-    else if (this.movL)
+	this.rotation = 90;
+    } else if (this.movL) {
 	this.facDir = "W";
-    else if (this.movU)
+	this.rotation = 270;
+    } else if (this.movU) {
 	this.facDir = "N";
-    else if (this.movD)
+	this.rotation = 0;
+    } else if (this.movD) {
 	this.facDir = "S";
+	this.rotation = 180;
+    }
+
 };
 
 TopDownSprite.prototype.updateAction = function() {
@@ -93,9 +102,7 @@ TopDownSprite.prototype.updateAction = function() {
     }
 };
 
-TopDownSprite.prototype.updateMovement = function() {
-    this.updateRotation();
-    
+TopDownSprite.prototype.updateMovement = function() {    
     // move player
     if (this.movL && !this.movR) {
 	this.vx = -this.forceX;
@@ -115,13 +122,6 @@ TopDownSprite.prototype.updateMovement = function() {
     if (!this.movU && !this.movD) {
 	this.vy = 0;
     }
-
-    this.vx += this.ax;
-    this.vy += this.ay;
-
-    this.x += Math.floor(this.vx / TPS);
-    this.y += Math.floor(this.vy / TPS);
-
 };
 
 // PLATFORMER SPRITE
@@ -173,12 +173,6 @@ PlatformerSprite.prototype.updateMovement = function() {
     //     this.vy = 0;
     // }
 
-    this.vx += this.ax;
-    this.vy += this.ay;
-
-    this.x += Math.floor(this.vx / TPS);
-    this.y += Math.floor(this.vy / TPS);
-
 };
 
 
@@ -186,6 +180,8 @@ PlatformerSprite.prototype.updateMovement = function() {
 function SceneryObject() {
     this.rotation = 0;
     this.visible = true;
+
+    this.colType = MASK_SCENERY;
 
     //Getters
     this.centerX = function() {
