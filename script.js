@@ -46,6 +46,7 @@ var topDownPlayerAnimator;
 var topDownMap;
 
 function initializeGame() {    
+    // INIT PLAYER
     topDownPlayer = new TopDownSprite();
     topDownPlayer.forceX = 120;
     topDownPlayer.forceY = 120;
@@ -53,7 +54,6 @@ function initializeGame() {
     topDownPlayer.y = 360;
     topDownPlayer.w = 16;
     topDownPlayer.h = 16;
-
 
     topDownPlayerAnimator = new Animator(tdPlayerTiles, topDownSheet, topDownPlayer);
     topDownPlayerAnimator.parseImageData();
@@ -70,17 +70,9 @@ function initializeGame() {
 
     platformerPlayerAnimator = new Animator(pfPlayerTiles, platformerSheet, platformerPlayer);
     platformerPlayerAnimator.parseImageData();
-
-    player = topDownPlayer;
-    playerAnimator = topDownPlayerAnimator;
-
-    player = platformerPlayer;
-    playerAnimator = platformerPlayerAnimator;
-
     
-    // INPUT SETUP
-    setInput(player);
 
+    // INIT MAP
     var topDownMap = new Map();
     topDownMap.initMap(topDownMapData, canvas, tdMapTiles);
     topDownMap.generateCollisionLayers();
@@ -89,8 +81,20 @@ function initializeGame() {
     platformerMap.initMap(platformerMapData, canvas, pfMapTiles);
     platformerMap.generateCollisionLayers();
 
-    map = topDownMap;
-    map = platformerMap;
+    // TOPDOWN or PLATFORMER
+    var mode = "platformer"; 
+	if (mode === "topdown") {
+	    player = topDownPlayer;
+	playerAnimator = topDownPlayerAnimator;
+	map = topDownMap;
+    } else {
+	player = platformerPlayer;
+	playerAnimator = platformerPlayerAnimator;
+	map = platformerMap;
+    }
+
+    // INPUT SETUP
+    setInput(player);
     
     gameState = PLAY_STATE;
 
