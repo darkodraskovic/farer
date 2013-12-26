@@ -25,8 +25,11 @@ function Map() {
 	this.collisionLayers = [];
 
 	for (var i = 0; i < this.layers.length; i++) {
-
-	    if (this.layers[i]["name"].indexOf("collision") > -1) {
+	    
+	    // Tile layers in TME has "data"; only layers with custom properties has "properties"
+	    if (this.layers[i].hasOwnProperty("data") && this.layers[i].hasOwnProperty("properties")
+		&& "collision" in this.layers[i]["properties"]) {
+		console.log("found col layer");
 		var data = this.layers[i]["data"];
 		this.collisionLayers[this.collisionLayers.length] = [];
 

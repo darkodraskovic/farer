@@ -4104,6 +4104,9 @@
   </data>
  </layer>
  <layer name="collision1" width="64" height="64">
+  <properties>
+   <property name="collision" value="true"/>
+  </properties>
   <data>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -8204,6 +8207,9 @@
   </data>
  </layer>
  <layer name="collision2" width="64" height="64">
+  <properties>
+   <property name="collision" value="true"/>
+  </properties>
   <data>
    <tile gid="0"/>
    <tile gid="0"/>

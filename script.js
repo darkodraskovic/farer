@@ -74,8 +74,8 @@ function initializeGame() {
     player = topDownPlayer;
     playerAnimator = topDownPlayerAnimator;
 
-    // player = platformerPlayer;
-    // playerAnimator = platformerPlayerAnimator;
+    player = platformerPlayer;
+    playerAnimator = platformerPlayerAnimator;
 
     
     // INPUT SETUP
@@ -90,7 +90,7 @@ function initializeGame() {
     platformerMap.generateCollisionLayers();
 
     map = topDownMap;
-//    map = platformerMap;
+    map = platformerMap;
     
     gameState = PLAY_STATE;
 
@@ -148,11 +148,11 @@ function playGame() {
     
     player.update();
     
-    var collisionCandidates = findCollisionCandidates(player, map);
+    var collisionCandidates = findSceneryCollisionCandidates(player, map);
 
     for (var j = 0; j < collisionCandidates.length; j++) {
 	if (collisionCandidates[j] != null) {
-	    var collisionSide = blockRectangle(player, collisionCandidates[j], false, true);
+	    var collisionSide = testRectangle(player, collisionCandidates[j], false, true);
 	    if (collisionSide === "bottom") {
 		player.vy = 0;
 		player.isJumping = false;
