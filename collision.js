@@ -8,9 +8,9 @@ function findSceneryCollisionCandidates(sprite, map) {
 
 	collisionCandidates.push(collisionLayer[spriteMapX][spriteMapY]);    
 
-	if (sprite.vx < 0) {
+	if (sprite.vx < 0 && sprite.x > map.tileW) {
 	    collisionCandidates.push(collisionLayer[spriteMapX - 1][spriteMapY]);
-	} else if (sprite.vx > 0) {
+	} else if (sprite.vx > 0 && sprite.x + sprite.w < map.w - map.tileW) {
 	    collisionCandidates.push(collisionLayer[spriteMapX + 1][spriteMapY]);
 	}
 	if (sprite.vy < 0) {

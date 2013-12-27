@@ -40,11 +40,12 @@ function Sprite(name, x, y, w, h, map) {
 	this.x += Math.floor(this.vx / TPS);
 	this.y += Math.floor(this.vy / TPS);
 
-	this.x = Math.max(0 + this.map.tileW, Math.min(this.x, this.map.w - this.w - this.map.tileW));
-	this.y = Math.max(0 + this.map.tileH, Math.min(this.y, this.map.h - this.h - this.map.tileH));
+	this.x = Math.max(0, Math.min(this.x, this.map.w - this.w));
+	this.y = Math.max(0, Math.min(this.y, this.map.h - this.h));
     };
 
     this.update = function() {
+	this.updateFacingDirection();
 	this.updateAction();
 	this.updateMovement();
 	this.updatePosition();
@@ -202,6 +203,8 @@ function GameObject() {
     this.halfHeight = function() {
 	return this.h / 2;
     };
+
+    this.update = function() {};
 };
 
 function SceneryObject() {};
@@ -211,3 +214,70 @@ SceneryObject.prototype.colType = MASK_SCENERY;
 function ActiveObject() {};
 ActiveObject.prototype = new GameObject();
 ActiveObject.prototype.colType = MASK_ACTIVE;
+
+function MovingActiveObject(){};
+MovingActiveObject.prototype = new ActiveObject();
+MovingActiveObject.prototype.vx = 0;
+MovingActiveObject.prototype.vy = 0;
+MovingActiveObject.prototype.ax = 0;
+MovingActiveObject.prototype.ay = 0;
+
+MovingActiveObject.prototype.updatePosition = function() {
+    this.vx += this.ax;
+    this.vy += this.ay;
+
+    this.x += Math.floor(this.vx / TPS);
+    this.y += Math.floor(this.vy / TPS);
+
+    if (this.x < 0) {
+	this.vx = -this.vx;
+	this.x = 0;
+    } else if (this.x > this.map.w) {
+	this.vx = -this.vx;
+	this.x = this.map.w - this.w;
+    }
+    if (this.y < 0) {
+	this.vy = -this.vy;
+	this.y = 0;
+    } else if (this.y > this.map.h) {
+	this.vy = -this.vy;
+	this.y = this.map.h - this.h;
+    }
+
+};
+
+MovingActiveObject.prototype.update = function() {
+    this.updatePosition();
+}
+
+function MovingPlatform(){};
+MovingPlatform.prototype = new MovingActiveObject();
+MovingPlatform.prototype.minDX = 0;
+MovingPlatform.prototype.minY = 0;
+MovingPlatform.prototype.maxDX = 0;
+MovingPlatform.prototype.maxDY = 0;
+
+
+MovingPlatform.prototype.switchDirection = function() {
+
+    if (this.maxDX > 0) {
+	if (this.x > this.origX + this.maxDX) {
+	    this.vx = -this.vx;
+	} else if (this.x < this.origX - this.maxDX) {
+	    this.vx = -this.vx;
+	}
+    }
+
+    if (this.maxDY) {
+	if (this.y > this.origY + this.maxDY) {
+	    this.vy = -this.vy;
+	} else if (this.y < this.origY - this.maxDY) {
+	    this.vy = -this.vy;
+	}
+    }
+};
+
+MovingPlatform.prototype.update = function() {
+    this.updatePosition();
+    this.switchDirection();
+};

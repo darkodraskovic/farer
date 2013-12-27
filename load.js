@@ -10,7 +10,7 @@ var platformerSheet;
 
 var loadData = function() {
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "data/testLevel.json", false);
+    xhr.open("GET", "data/topdownMap.json", false);
     xhr.onload = function() {
 	loadHandler();
 	topDownMapData = JSON.parse(this.responseText);
