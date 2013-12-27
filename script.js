@@ -22,15 +22,46 @@ var camera = {
 
     updateCamera: function(followee, map) {
 	// center the camera on the followee & keep it inside the map boundaries
-	this.x = Math.max(0, Math.min(
-	    Math.floor((followee.x + followee.w / 2) - this.w / 2),
-	    map.w - this.w)
-			 );
+	if (followee.x < this.leftInnerBoundary()) {
+	    this.x = Math.max(0, Math.min(
+		Math.floor(followee.x - this.w * 1/4), 
+		map.w - this.w
+	    )); 
+	}
+	if (followee.x + followee.w > this.rightInnerBoundary()) {
+	    this.x = Math.max(0, Math.min(
+		Math.floor(followee.x + followee.w - this.w * 3/4), 
+		map.w - this.w
+	    ));
+	}
 
-	this.y = Math.max(0, Math.min(
-	    Math.floor((followee.y + followee.h / 2) - this.h / 2),
-	    map.h - this.h)
-			 ); 
+	if (followee.y + followee.h > this.bottomInnerBoundary()) {
+	    this.y = Math.max(0, Math.min(
+		Math.floor(followee.y + followee.h - this.h * 3/4),
+		map.h - this.h
+	    )); 
+	} 
+	if (followee.y < this.topInnerBoundary()) {
+	    this.y = Math.max(0, Math.min(
+		Math.floor(followee.y - this.h * 1/4),
+		map.h - this.h
+	    )); 
+	}
+	
+    },
+
+    // The camera's inner boundaries
+    rightInnerBoundary: function() {
+	return this.x + this.w * 3/4;
+    },
+    leftInnerBoundary: function() {
+	return this.x + this.w * 1/4;
+    },
+    topInnerBoundary: function() {
+	return this.y + this.h * 1/4;
+    },
+    bottomInnerBoundary: function() {
+	return this.y + this.h * 3/4;
     }
 
 };
@@ -45,15 +76,26 @@ var topDownPlayer;
 var topDownPlayerAnimator;
 var topDownMap;
 
-function initializeGame() {    
+function initializeGame() {
+    // INIT MAP
+    var topDownMap = new Map();
+    topDownMap.initMap(topDownMapData, canvas, tdMapTiles);
+    topDownMap.generateCollisionLayers();
+
+    var platformerMap = new Map();
+    platformerMap.initMap(platformerMapData, canvas, pfMapTiles);
+    platformerMap.generateCollisionLayers();
+
+    
     // INIT PLAYER
     topDownPlayer = new TopDownSprite();
     topDownPlayer.forceX = 120;
     topDownPlayer.forceY = 120;
-    topDownPlayer.x = 256;
-    topDownPlayer.y = 360;
+    topDownPlayer.x = 64;
+    topDownPlayer.y = 312;
     topDownPlayer.w = 16;
     topDownPlayer.h = 16;
+    topDownPlayer.map = topDownMap;
 
     topDownPlayerAnimator = new Animator(tdPlayerTiles, topDownSheet, topDownPlayer);
     topDownPlayerAnimator.parseImageData();
@@ -66,20 +108,11 @@ function initializeGame() {
     platformerPlayer.forceX = 120;
     platformerPlayer.forceY = 370;
     platformerPlayer.ay = 16;
-
+    platformerPlayer.map = platformerMap;
 
     platformerPlayerAnimator = new Animator(pfPlayerTiles, platformerSheet, platformerPlayer);
     platformerPlayerAnimator.parseImageData();
     
-
-    // INIT MAP
-    var topDownMap = new Map();
-    topDownMap.initMap(topDownMapData, canvas, tdMapTiles);
-    topDownMap.generateCollisionLayers();
-
-    var platformerMap = new Map();
-    platformerMap.initMap(platformerMapData, canvas, pfMapTiles);
-    platformerMap.generateCollisionLayers();
 
     // TOPDOWN or PLATFORMER
     var mode = "topdown"; 
@@ -93,12 +126,14 @@ function initializeGame() {
 	map = platformerMap;
     }
 
+
     // INPUT SETUP
     setInput(player);
     
     gameState = PLAY_STATE;
 
-    console.log("Playing");    
+    console.log("Playing");
+//    console.log("camera w h: " + camera.w + " " + camera.h);
 }
 
 
@@ -162,7 +197,10 @@ function playGame() {
 		player.isJumping = false;
 	    } else if (collisionSide === "top") {
 		player.vy = 0;
+	    } else if (collisionSide === "left" || collisionSide === "right") {
+		player.vx = 0;
 	    }
+
 	}
     }
     

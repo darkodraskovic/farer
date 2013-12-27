@@ -3,7 +3,7 @@ var MASK_NONE = 0;
 var MASK_SCENERY = 1;
 var MASK_PLAYER = 2;
 
-function Sprite(name, x, y, w, h) {
+function Sprite(name, x, y, w, h, map) {
     this.name = name;
     this.x = x;
     this.y = y;
@@ -16,6 +16,7 @@ function Sprite(name, x, y, w, h) {
     this.forceX = 0;
     this.forceY = 0;
     this.rotation = 0;
+    this.map = map;
 
     this.colType = MASK_PLAYER;
     this.colMask = MASK_SCENERY;
@@ -35,7 +36,10 @@ function Sprite(name, x, y, w, h) {
 	this.vy += this.ay;
 
 	this.x += Math.floor(this.vx / TPS);
-	this.y += Math.floor(this.vy / TPS);	
+	this.y += Math.floor(this.vy / TPS);
+
+	this.x = Math.max(0 + this.map.tileW, Math.min(this.x, this.map.w - this.w - this.map.tileW));
+	this.y = Math.max(0 + this.map.tileH, Math.min(this.y, this.map.h - this.h - this.map.tileH));
     };
 
     this.update = function() {
