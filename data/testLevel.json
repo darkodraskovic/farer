@@ -40,6 +40,73 @@
          "width":64,
          "x":0,
          "y":0
+        }, 
+        {
+         "height":64,
+         "name":"objects1",
+         "objects":[
+                {
+                 "gid":62,
+                 "height":256,
+                 "name":"elevatorUp",
+                 "properties":
+                    {
+                     "solid":"0"
+                    },
+                 "type":"",
+                 "visible":true,
+                 "width":256,
+                 "x":544,
+                 "y":240
+                }, 
+                {
+                 "gid":63,
+                 "height":256,
+                 "name":"evelatorDown",
+                 "properties":
+                    {
+                     "solid":"0"
+                    },
+                 "type":"",
+                 "visible":true,
+                 "width":256,
+                 "x":544,
+                 "y":432
+                }, 
+                {
+                 "gid":61,
+                 "height":256,
+                 "name":"shaft",
+                 "properties":
+                    {
+                     "solid":"1"
+                    },
+                 "type":"",
+                 "visible":true,
+                 "width":256,
+                 "x":160,
+                 "y":448
+                }, 
+                {
+                 "gid":61,
+                 "height":256,
+                 "name":"shaft",
+                 "properties":
+                    {
+                     "solid":"1"
+                    },
+                 "type":"",
+                 "visible":true,
+                 "width":256,
+                 "x":160,
+                 "y":224
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "width":64,
+         "x":0,
+         "y":0
         }],
  "orientation":"orthogonal",
  "properties":
@@ -50,7 +117,7 @@
  "tilesets":[
         {
          "firstgid":1,
-         "image":"..\/images\/groundTiles.png",
+         "image":"..\/..\/..\/..\/..\/..\/..\/..\/..\/media\/sf_Radovi\/AppDev\/Emacs\/JS\/FromScratch\/Farer\/images\/groundTiles.png",
          "imageheight":672,
          "imagewidth":320,
          "margin":0,

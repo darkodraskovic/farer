@@ -23,16 +23,17 @@ function findSceneryCollisionCandidates(sprite, map) {
     return collisionCandidates;
 }
 
-// OVERLAP with side: mask = false, block = false
-// COLLISION without (block) behavior: mask = true, block = false
-// COLLISION with (block) behavior: mask = true, block = true
-// With scenery col candidates we put normally mask = false, block = true, since they are in principle solid
-function testRectangle(r1, r2, mask, block)
+
+function testCollisionMask(sprite1, sprite2) {
+    if (!(sprite1.colMask & sprite2.colType)) {
+	return false;
+    } else return true;
+
+}
+
+// if block = true then add the blocking behavior
+function testRectangle(r1, r2, block)
 {
-    // Collision bit mask defines the collision types sprite r1 interacts with
-    if (mask && !(r1.colMask & r2.colType)) {
-	return "none";
-    } 
 
     //A variable to tell us which side the collision is occurring on
     var collisionSide = "";

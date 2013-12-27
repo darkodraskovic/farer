@@ -13,7 +13,6 @@ var PLAY_STATE = 2;
 // LOAD
 var gameState = LOAD_STATE;
 
-
 var camera = {
     x: 0,
     y: 0,
@@ -86,12 +85,13 @@ function initializeGame() {
     platformerMap.initMap(platformerMapData, canvas, pfMapTiles);
     platformerMap.generateCollisionLayers();
 
+//    console.log(topDownMap.objectLayers);
     
     // INIT PLAYER
     topDownPlayer = new TopDownSprite();
     topDownPlayer.forceX = 120;
     topDownPlayer.forceY = 120;
-    topDownPlayer.x = 64;
+    topDownPlayer.x = 312;
     topDownPlayer.y = 312;
     topDownPlayer.w = 16;
     topDownPlayer.h = 16;
@@ -133,7 +133,6 @@ function initializeGame() {
     gameState = PLAY_STATE;
 
     console.log("Playing");
-//    console.log("camera w h: " + camera.w + " " + camera.h);
 }
 
 
@@ -149,23 +148,38 @@ function renderMap(map){
 
     // render the map
     var i, j, k;
+    var objInd = 0;
     for (i = 0; i < map.layers.length; i++) {
-    	var data = map.layers[i]["data"];
-    	for (j = offset[0]; j <= (offset[0] + map.viewportW); j++) {
-    	    for (k = offset[1]; k <= (offset[1] + map.viewportH); k++) {
-    		var cell = k * map.cols + j;
-    		if (data[cell] > 0) {
-    		    ctx.drawImage(map.img,
-    		    		  ((data[cell] - 1) % map.tileCols) * map.tileW,
-    				  Math.floor((data[cell] - 1) / map.tileCols) * map.tileH,
-    		    		  map.tileW, map.tileH,
-    		    		  j * map.tileW, k * map.tileH,
-    				  map.tileW, map.tileH);
+	// render background and collision layers
+	if ("data" in map.layers[i]) {
+    	    var data = map.layers[i]["data"];
+    	    for (j = offset[0]; j <= (offset[0] + map.viewportW); j++) {
+    		for (k = offset[1]; k <= (offset[1] + map.viewportH); k++) {
+    		    var cell = k * map.cols + j;
+    		    if (data[cell] > 0) {
+    			ctx.drawImage(map.img,
+    		    		      ((data[cell] - 1) % map.tileCols) * map.tileW,
+    				      Math.floor((data[cell] - 1) / map.tileCols) * map.tileH,
+    		    		      map.tileW, map.tileH,
+    		    		      j * map.tileW, k * map.tileH,
+    				      map.tileW, map.tileH);
+    		    }
     		}
-    	    }
-	    
+	    }
     	}
-
+	// render object layers
+	else if ("objects" in map.layers[i]) {
+	    var objects = map.objectLayers[objInd];
+	    for (j = 0; j < objects.length; j++) {
+    		ctx.drawImage(map.img,
+    		    	      ((objects[j].code - 1) % map.tileCols) * map.tileW,
+    			      Math.floor((objects[j].code - 1) / map.tileCols) * map.tileH,
+    		    	      map.tileW, map.tileH,
+    		    	      objects[j].x, objects[j].y,
+    			      objects[j].w, objects[j].h);		
+	    }
+	    objInd++;
+	}
     }
 
 
@@ -189,9 +203,9 @@ function playGame() {
     
     var collisionCandidates = findSceneryCollisionCandidates(player, map);
 
-    for (var j = 0; j < collisionCandidates.length; j++) {
-	if (collisionCandidates[j] != null) {
-	    var collisionSide = testRectangle(player, collisionCandidates[j], false, true);
+    for (var i = 0; i < collisionCandidates.length; i++) {
+	if (collisionCandidates[i] != null) {
+	    var collisionSide = testRectangle(player, collisionCandidates[i], true);
 	    if (collisionSide === "bottom") {
 		player.vy = 0;
 		player.isJumping = false;
@@ -201,6 +215,17 @@ function playGame() {
 		player.vx = 0;
 	    }
 
+	}
+    }
+
+    for (i = 0; i < map.objectLayers.length; i++) {
+	var objects = map.objectLayers[i];
+	for (var j = 0; j < objects.length; j++) {
+	    if (testCollisionMask(player, objects[j])) {
+		if (testRectangle(player, objects[j], true) != "none") {
+		    console.log("Collided with " + objects[j].name + ".");
+		}
+	    }
 	}
     }
     

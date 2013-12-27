@@ -1,7 +1,9 @@
 // CONSTS
 var MASK_NONE = 0;
-var MASK_SCENERY = 1;
-var MASK_PLAYER = 2;
+var MASK_PLAYER = 1;
+var MASK_OBJECT = 2;
+var MASK_SCENERY = 4;
+var MASK_ACTIVE = 8;
 
 function Sprite(name, x, y, w, h, map) {
     this.name = name;
@@ -19,7 +21,7 @@ function Sprite(name, x, y, w, h, map) {
     this.map = map;
 
     this.colType = MASK_PLAYER;
-    this.colMask = MASK_SCENERY;
+    this.colMask = MASK_SCENERY | MASK_ACTIVE;
 
     // Movement & facing directions
     this.facDir = undefined;
@@ -181,11 +183,11 @@ PlatformerSprite.prototype.updateMovement = function() {
 
 
 // SCENERY SPRITE
-function SceneryObject() {
+function GameObject() {
     this.rotation = 0;
     this.visible = true;
 
-    this.colType = MASK_SCENERY;
+    this.colType = MASK_OBJECT;
 
     //Getters
     this.centerX = function() {
@@ -201,3 +203,11 @@ function SceneryObject() {
 	return this.h / 2;
     };
 };
+
+function SceneryObject() {};
+SceneryObject.prototype = new GameObject();
+SceneryObject.prototype.colType = MASK_SCENERY;
+
+function ActiveObject() {};
+ActiveObject.prototype = new GameObject();
+ActiveObject.prototype.colType = MASK_ACTIVE;

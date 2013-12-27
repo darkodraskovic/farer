@@ -23,13 +23,13 @@ function Map() {
 
     this.generateCollisionLayers = function() {
 	this.collisionLayers = [];
-
+	this.objectLayers = [];
+	
 	for (var i = 0; i < this.layers.length; i++) {
 	    
 	    // Tile layers in TME has "data"; only layers with custom properties has "properties"
 	    if (this.layers[i].hasOwnProperty("data") && this.layers[i].hasOwnProperty("properties")
 		&& "collision" in this.layers[i]["properties"]) {
-		console.log("found col layer");
 		var data = this.layers[i]["data"];
 		this.collisionLayers[this.collisionLayers.length] = [];
 
@@ -56,6 +56,28 @@ function Map() {
 		}
 
 	    }
+	    // generate object layers
+	    else if (this.layers[i].hasOwnProperty("objects")) {
+		var objects = this.layers[i]["objects"];
+		this.objectLayers[this.objectLayers.length] = [];
+		for (var obj in objects) {
+		    var actObj = new ActiveObject();
+		    actObj.h = objects[obj]["height"] / this.tileH;
+		    actObj.w = objects[obj]["width"] / this.tileW;
+		    actObj.visible = objects[obj]["visible"];
+		    actObj.name = objects[obj]["name"];
+		    actObj.x = objects[obj]["x"];
+		    actObj.y = objects[obj]["y"];
+		    actObj.code = objects[obj]["gid"];
+		    actObj.properties = objects[obj]["properties"];
+		    for (var prop in actObj.properties) {
+			actObj[prop] = parseInt(actObj.properties[prop]);
+		    }
+		    this.objectLayers[this.objectLayers.length - 1].push(actObj);
+		}
+	
+	    }
+	    
 	}
     };
 };
