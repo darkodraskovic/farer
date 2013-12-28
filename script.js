@@ -91,6 +91,8 @@ function initializeGame() {
     topDownPlayer = new TopDownSprite();
     topDownPlayer.forceX = 120;
     topDownPlayer.forceY = 120;
+    topDownPlayer.vxMax = 120;
+    topDownPlayer.vyMax = 120;
     topDownPlayer.x = 312;
     topDownPlayer.y = 312;
     topDownPlayer.w = 16;
@@ -101,14 +103,18 @@ function initializeGame() {
     topDownPlayerAnimator.parseImageData();
 
     platformerPlayer = new PlatformerSprite();
-    platformerPlayer.x = 128;
-    platformerPlayer.y = 360;
+    platformerPlayer.x = platformerMap.tileW * 5;
+    platformerPlayer.y = platformerMap.h - platformerMap.tileH * 8;
     platformerPlayer.w = 32;
     platformerPlayer.h = 32;
-    platformerPlayer.forceX = 120;
-    platformerPlayer.forceY = 360;
-    platformerPlayer.ay = 16;
+    platformerPlayer.forceX = 86;
+    platformerPlayer.forceY = 420;
+    platformerPlayer.vxMax = 120;
+    platformerPlayer.vyMax = 1000;
+    platformerPlayer.g = 20;    
+    platformerPlayer.frict = 4;
     platformerPlayer.map = platformerMap;
+
 
     platformerPlayerAnimator = new Animator(pfPlayerTiles, platformerSheet, platformerPlayer);
     platformerPlayerAnimator.parseImageData();
@@ -116,8 +122,8 @@ function initializeGame() {
 
     // TOPDOWN or PLATFORMER
     var mode = "platformer"; 
-	if (mode === "topdown") {
-	    player = topDownPlayer;
+    if (mode === "topdown") {
+	player = topDownPlayer;
 	playerAnimator = topDownPlayerAnimator;
 	map = topDownMap;
     } else {
@@ -129,18 +135,25 @@ function initializeGame() {
 
     // INPUT SETUP
     setInput(player);
+
     
     gameState = PLAY_STATE;
-//    console.log(map.objectLayers[0]);
     console.log("Playing");
+
 }
 
 
 
 
 function playGame() {
-    
+    // update game state
     player.update();
+    
+    // console.log("player.vx = " + player.vx);
+    // console.log("player.vy = " + player.vy);
+    // console.log("player.g = " + player.g);
+    // console.log("player.isJumping = " + player.isJumping);
+
 
     for (i = 0; i < map.objectLayers.length; i++) {
     	var objects = map.objectLayers[i];
@@ -149,6 +162,7 @@ function playGame() {
     	}
     }
     
+    // test for collisions
     var collisionCandidates = findSceneryCollisionCandidates(player, map);
 
     for (var i = 0; i < collisionCandidates.length; i++) {
@@ -160,8 +174,10 @@ function playGame() {
 		player.isJumping = false;
 	    } else if (collisionSide === "top") {
 		player.vy = -player.vy;
+		player.ax = 0;
 	    } else if (collisionSide === "left" || collisionSide === "right") {
 		player.vx = 0;
+		player.ax = 0;
 	    }
 
 	}
@@ -176,26 +192,32 @@ function playGame() {
 		    player.vy = 0;
 		    player.isJumping = false;
 		    if (objects[j] instanceof MovingPlatform) {
-			player.ax = objects[j].vx;
+			player.vx = objects[j].vx;
+			if (objects[j].vy > 0)
+			    player.vy = objects[j].vy;
 		    }
 		} else if (collisionSide === "top") {
 		    player.vy = -player.vy;
+		    player.ax = 0;
 		} else if (collisionSide === "left" || collisionSide === "right") {
 		    player.vx = 0;
+		    player.ax = 0;
 		}
 	    } 
 	}
     }
 
-
+    // update camera and render the world
     camera.updateCamera(player, map);
 
     renderMap(map, player);
 
+    // animate
     if (tpsCounter % (TPS / playerAnimator.frameRate) === 0) {
 	playerAnimator.play(player.action);
     }
 
+    // count ticks
     if (++tpsCounter > 60)
 	tpsCounter = 0;
 

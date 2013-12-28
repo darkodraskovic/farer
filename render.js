@@ -41,6 +41,7 @@ function renderMap(map, player){
     				  objects[j].w, objects[j].h);		
 		}
 	    } else if (map.layers[i]["properties"]["moving"]) {
+
 		for (j = 0; j < objects.length; j++) {
 		    ctx.fillStyle="#FF0000";
 		    ctx.fillRect(objects[j].x, objects[j].y, objects[j].w, objects[j].h);
@@ -54,9 +55,9 @@ function renderMap(map, player){
     // render the PC
     var animator = player.animator;
     ctx.translate(player.x + player.w / 2, player.y + player.h / 2);    
-    if (player.rotation !== 0) {
-	ctx.rotate(player.rotation * Math.PI / 180);
-    }
+
+    ctx.rotate(player.rotation * Math.PI / 180);
+    
     ctx.drawImage(animator.image,
     		  animator.srcX, animator.srcY, animator.tileW, animator.tileH,
     		  -animator.tileW / 2, -animator.tileH / 2, animator.tileW, animator.tileH

@@ -12,11 +12,16 @@ function Sprite(name, x, y, w, h, map) {
     this.w = w;
     this.h = h;
     this.vx = 0;
+    this.vxMax = 0;
     this.vy = 0;
+    this.vyMax = 0;
     this.ax = 0;
     this.ay = 0;
     this.forceX = 0;
     this.forceY = 0;
+    this.g = 0;
+    this.frict = 0;
+    this.isJumping = false;
     this.rotation = 0;
     this.map = map;
 
@@ -34,14 +39,32 @@ function Sprite(name, x, y, w, h, map) {
     this.action = undefined;
 
     this.updatePosition = function() {
-	this.vx += this.ax;
-	this.vy += this.ay;
+	// apply the acceleration
+	if (Math.abs(this.vx + this.ax) < this.vxMax) {
+	    this.vx += this.ax;
+	} else this.vx = (Math.abs(this.vx)/this.vx) * this.vxMax;
 
-	this.x += Math.floor(this.vx / TPS);
-	this.y += Math.floor(this.vy / TPS);
+	if (Math.abs(this.vy + this.ay) < this.vyMax) {
+	    this.vy += this.ay;
+	} else this.vy = (Math.abs(this.vy)/this.vy) * this.vyMax;
+
+	// apply the friction
+	if (this.vx - this.frict > 0) {
+	    this.vx -= this.frict;
+	}
+	else if (this.vx + this.frict < 0) {
+	    this.vx += this.frict;
+	} else this.vx = 0;
+
+	// apply the gravity
+	this.vy += this.g;
+
+	this.x += this.vx / TPS;
+	this.y += this.vy / TPS;
 
 	this.x = Math.max(0, Math.min(this.x, this.map.w - this.w));
 	this.y = Math.max(0, Math.min(this.y, this.map.h - this.h));
+
     };
 
     this.update = function() {
@@ -104,7 +127,7 @@ TopDownSprite.prototype.updateFacingDirection = function () {
 TopDownSprite.prototype.updateAction = function() {
     if(this.movL || this.movR || this.movU || this.movD) {
 	this.action = "walking";
-    } else 	if (!this.movU && !this.movD && !this.movL && !this.movR) {
+    } else if (!this.movU && !this.movD && !this.movL && !this.movR) {
 	this.action = "standing";
     }
 };
@@ -151,7 +174,7 @@ PlatformerSprite.prototype.updateAction = function() {
     }
     else if (this.movL || this.movR) {
 	this.action = "running_" + this.facDir;
-    } else {
+    } else if (this.ax === 0) {
 	this.action = "standing_" + this.facDir;
     }
     
@@ -161,20 +184,20 @@ PlatformerSprite.prototype.updateAction = function() {
 PlatformerSprite.prototype.updateMovement = function() {	
     // move player
     if (this.movL && !this.movR) {
-	this.vx = -this.forceX;
+	this.ax = -this.forceX;
     }
     if (this.movR && !this.movL) {
-	this.vx = this.forceX;
+	this.ax = this.forceX;
     }
     if (this.movU && !this.isJumping) {
-	this.isJumping = true;	
+	this.isJumping = true;
 	this.vy = -this.forceY;
     }
     // if (this.movD && !this.movU) {
     //     this.vy = this.forceY;
     // }
     if (!this.movL && !this.movR) {
-	this.vx = 0;
+	this.ax = 0;
     }
     // if (!this.movU && !this.movD) {
     //     this.vy = 0;
@@ -183,7 +206,7 @@ PlatformerSprite.prototype.updateMovement = function() {
 };
 
 
-// SCENERY SPRITE
+// GAME OBJECT
 function GameObject() {
     this.rotation = 0;
     this.visible = true;
@@ -229,21 +252,6 @@ MovingActiveObject.prototype.updatePosition = function() {
     this.x += Math.floor(this.vx / TPS);
     this.y += Math.floor(this.vy / TPS);
 
-    if (this.x < 0) {
-	this.vx = -this.vx;
-	this.x = 0;
-    } else if (this.x > this.map.w) {
-	this.vx = -this.vx;
-	this.x = this.map.w - this.w;
-    }
-    if (this.y < 0) {
-	this.vy = -this.vy;
-	this.y = 0;
-    } else if (this.y > this.map.h) {
-	this.vy = -this.vy;
-	this.y = this.map.h - this.h;
-    }
-
 };
 
 MovingActiveObject.prototype.update = function() {
@@ -275,6 +283,22 @@ MovingPlatform.prototype.switchDirection = function() {
 	    this.vy = -this.vy;
 	}
     }
+
+    if (this.x < 0) {
+	this.vx = -this.vx;
+	this.x = 0;
+    } else if (this.x + this.w > this.map.w) {
+	this.vx = -this.vx;
+	this.x = this.map.w - this.w;
+    }
+    if (this.y < 0) {
+	this.vy = -this.vy;
+	this.y = 0;
+    } else if (this.y + this.h > this.map.h) {
+	this.vy = -this.vy;
+	this.y = this.map.h - this.h;
+    }
+
 };
 
 MovingPlatform.prototype.update = function() {

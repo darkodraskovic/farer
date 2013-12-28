@@ -6,10 +6,12 @@ function Map() {
 	this.img = img;
 	this.tileW = mapData["tilewidth"];
 	this.tileH = mapData["tileheight"];
-	this.imgW = mapData["tilesets"][0]["imagewidth"];
-	this.imgH = mapData["tilesets"][0]["imageheight"];	
-	this.tileCols = this.imgW / this.tileW;
-	this.tileRows = this.imgH / this.tileH;
+	if (mapData["tilesets"][0] !== undefined) {
+	    this.imgW = mapData["tilesets"][0]["imagewidth"];
+	    this.imgH = mapData["tilesets"][0]["imageheight"];	
+	    this.tileCols = this.imgW / this.tileW;
+	    this.tileRows = this.imgH / this.tileH;
+	}
 
 	this.cols = mapData["width"];
 	this.rows = mapData["height"];
