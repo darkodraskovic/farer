@@ -57,7 +57,7 @@
                  "name":"platform",
                  "properties":
                     {
-                     "maxDY":"32",
+                     "maxDY":"29",
                      "vy":"60"
                     },
                  "type":"",

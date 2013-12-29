@@ -2077,7 +2077,7 @@
   </properties>
   <object name="platform" x="32" y="320" width="128" height="32">
    <properties>
-    <property name="maxDY" value="32"/>
+    <property name="maxDY" value="28"/>
     <property name="vy" value="60"/>
    </properties>
   </object>

@@ -108,7 +108,7 @@ function initializeGame() {
     platformerPlayer.w = 32;
     platformerPlayer.h = 32;
     platformerPlayer.forceX = 86;
-    platformerPlayer.forceY = 420;
+    platformerPlayer.forceY = 460;
     platformerPlayer.vxMax = 120;
     platformerPlayer.vyMax = 1000;
     platformerPlayer.g = 20;    
@@ -192,6 +192,7 @@ function playGame() {
 		    player.vy = 0;
 		    player.isJumping = false;
 		    if (objects[j] instanceof MovingPlatform) {
+			console.log(player.vx);
 			player.vx = objects[j].vx;
 			if (objects[j].vy > 0)
 			    player.vy = objects[j].vy;
