@@ -22,6 +22,8 @@ function Sprite(name, x, y, w, h, map) {
     this.g = 0;
     this.frict = 0;
     this.isJumping = false;
+    this.vehicle = null;
+    this.isTransported = false;
     this.rotation = 0;
     this.map = map;
 
@@ -38,6 +40,19 @@ function Sprite(name, x, y, w, h, map) {
     
     this.action = undefined;
 
+    this.updateVehicle = function() {
+	if (!this.isTransported && this.vehicle) {
+	    this.isTransported = true;
+	}
+	else if (this.isTransported) {
+	    if (this.x + this.w < this.vehicle.x || this.x > this.vehicle.x + this.vehicle.w ||
+		this.y < this.vehicle.y - this.h - this.g || this.y > this.vehicle.y + this.vehicle.h) {
+		this.isTransported = false;
+		this.vehicle = null;
+	    }
+	}
+    };
+    
     this.updatePosition = function() {
 	// apply the acceleration
 	if (Math.abs(this.vx + this.ax) < this.vxMax) {
@@ -62,6 +77,12 @@ function Sprite(name, x, y, w, h, map) {
 	this.x += this.vx / TPS;
 	this.y += this.vy / TPS;
 
+	// apply the vehicle speed
+	if (this.vehicle) {
+	    this.x += this.vehicle.vx / TPS;
+	    this.y += this.vehicle.vy / TPS;
+	}
+
 	this.x = Math.max(0, Math.min(this.x, this.map.w - this.w));
 	this.y = Math.max(0, Math.min(this.y, this.map.h - this.h));
 
@@ -71,6 +92,7 @@ function Sprite(name, x, y, w, h, map) {
 	this.updateFacingDirection();
 	this.updateAction();
 	this.updateMovement();
+	this.updateVehicle();
 	this.updatePosition();
     };
     

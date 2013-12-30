@@ -71,7 +71,7 @@
                  "name":"platform",
                  "properties":
                     {
-                     "maxDX":"128",
+                     "maxDX":"64",
                      "vx":"60"
                     },
                  "type":"",

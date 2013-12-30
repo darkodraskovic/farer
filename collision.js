@@ -1,3 +1,7 @@
+var COLLISION_ONLY = 0;
+var BLOCK = 1;
+var BOUNCE = 2;
+
 function findSceneryCollisionCandidates(sprite, map) {
     var collisionCandidates = [];    
     
@@ -32,7 +36,7 @@ function testCollisionMask(sprite1, sprite2) {
 }
 
 // if block = true then add the blocking behavior
-function testRectangle(r1, r2, block)
+function testRectangle(r1, r2, mode)
 {
 
     //A variable to tell us which side the collision is occurring on
@@ -71,15 +75,17 @@ function testRectangle(r1, r2, block)
 		    collisionSide = "top";
 		    
 		    //Move the rectangle out of the collision
-		    if (block) r1.y = r1.y + overlapY;
+		    if (mode === BLOCK) {r1.y = r1.y + overlapY; r1.vy = 0;}
+		    else if (mode === BOUNCE) r1.vy = -r1.vy;
 		}
 		else 
 		{
 		    collisionSide = "bottom";
 		    
 		    //Move the rectangle out of the collision
-		    if (block) r1.y = r1.y - overlapY;
-		}
+		    if (mode === BLOCK) {r1.y = r1.y - overlapY; r1.vy = 0;}
+		    else if (mode === BOUNCE) r1.vy = -r1.vy;		
+		}		
 	    } 
 	    else 
 	    {
@@ -90,15 +96,18 @@ function testRectangle(r1, r2, block)
 		    collisionSide = "left";
 		    
 		    //Move the rectangle out of the collision
-		    if (block) r1.x = r1.x + overlapX;
+		    if (mode === BLOCK) {r1.x = r1.x + overlapX; r1.vx = 0;}
+		    else if (mode === BOUNCE) r1.vx = -r1.vx;
 		}
 		else 
 		{
 		    collisionSide = "right";
 		    
 		    //Move the rectangle out of the collision
-		    if (block) r1.x = r1.x - overlapX;
+		    if (mode === BLOCK) {r1.x = r1.x - overlapX; r1.vx = 0;}
+		    else if (mode === BOUNCE) r1.vx = -r1.vx;
 		}
+		
 	    } 
 	}
 	else 

@@ -167,19 +167,12 @@ function playGame() {
 
     for (var i = 0; i < collisionCandidates.length; i++) {
 	if (collisionCandidates[i] != null) {
-	    var collisionSide = testRectangle(player, collisionCandidates[i], true);
+	    var collisionSide = testRectangle(player, collisionCandidates[i], BLOCK);
 	    if (collisionSide === "bottom") {		
-		player.vy = 0;
-		player.ax = 0;
 		player.isJumping = false;
 	    } else if (collisionSide === "top") {
 		player.vy = -player.vy;
-		player.ax = 0;
-	    } else if (collisionSide === "left" || collisionSide === "right") {
-		player.vx = 0;
-		player.ax = 0;
 	    }
-
 	}
     }
 
@@ -187,22 +180,14 @@ function playGame() {
 	objects = map.objectLayers[i];
 	for (var j = 0; j < objects.length; j++) {
 	    if (testCollisionMask(player, objects[j])) {
-		collisionSide = testRectangle(player, objects[j], true);
+		collisionSide = testRectangle(player, objects[j], BLOCK);
 		if (collisionSide === "bottom") {
-		    player.vy = 0;
 		    player.isJumping = false;
-		    if (objects[j] instanceof MovingPlatform) {
-			console.log(player.vx);
-			player.vx = objects[j].vx;
-			if (objects[j].vy > 0)
-			    player.vy = objects[j].vy;
+		    if (objects[j] instanceof MovingPlatform && player.vehicle === null) {
+			player.vehicle = objects[j];
 		    }
 		} else if (collisionSide === "top") {
 		    player.vy = -player.vy;
-		    player.ax = 0;
-		} else if (collisionSide === "left" || collisionSide === "right") {
-		    player.vx = 0;
-		    player.ax = 0;
 		}
 	    } 
 	}
