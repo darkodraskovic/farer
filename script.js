@@ -89,14 +89,16 @@ function initializeGame() {
     
     // INIT PLAYER
     topDownPlayer = new TopDownSprite();
-    topDownPlayer.forceX = 120;
-    topDownPlayer.forceY = 120;
+    topDownPlayer.forceX = 30;
+    topDownPlayer.forceY = 30;
     topDownPlayer.vxMax = 120;
     topDownPlayer.vyMax = 120;
+    topDownPlayer.frictX = 10;
+    topDownPlayer.frictY = 10;    
     topDownPlayer.x = 312;
     topDownPlayer.y = 312;
-    topDownPlayer.w = 16;
-    topDownPlayer.h = 16;
+    topDownPlayer.w = 12;
+    topDownPlayer.h = 12;
     topDownPlayer.map = topDownMap;
 
     topDownPlayerAnimator = new Animator(tdPlayerTiles, topDownSheet, topDownPlayer);
@@ -112,7 +114,7 @@ function initializeGame() {
     platformerPlayer.vxMax = 120;
     platformerPlayer.vyMax = 1000;
     platformerPlayer.g = 20;    
-    platformerPlayer.frict = 4;
+    platformerPlayer.frictX = 4;
     platformerPlayer.map = platformerMap;
 
 
@@ -121,8 +123,8 @@ function initializeGame() {
     
 
     // TOPDOWN or PLATFORMER
-    var mode = "platformer"; 
-    if (mode === "topdown") {
+    var mode = "p"; 
+    if (mode === "t") {
 	player = topDownPlayer;
 	playerAnimator = topDownPlayerAnimator;
 	map = topDownMap;
@@ -169,9 +171,7 @@ function playGame() {
 	if (collisionCandidates[i] != null) {
 	    var collisionSide = testRectangle(player, collisionCandidates[i], BLOCK);
 	    if (collisionSide === "bottom") {		
-		player.isJumping = false;
-	    } else if (collisionSide === "top") {
-		player.vy = -player.vy;
+		player.isJumping = false;		
 	    }
 	}
     }
@@ -187,7 +187,7 @@ function playGame() {
 			player.vehicle = objects[j];
 		    }
 		} else if (collisionSide === "top") {
-		    player.vy = -player.vy;
+		    player.vy = objects[j].vy;
 		}
 	    } 
 	}

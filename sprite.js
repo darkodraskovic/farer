@@ -20,7 +20,8 @@ function Sprite(name, x, y, w, h, map) {
     this.forceX = 0;
     this.forceY = 0;
     this.g = 0;
-    this.frict = 0;
+    this.frictX = 0;
+    this.frictY = 0;
     this.isJumping = false;
     this.vehicle = null;
     this.isTransported = false;
@@ -64,12 +65,19 @@ function Sprite(name, x, y, w, h, map) {
 	} else this.vy = (Math.abs(this.vy)/this.vy) * this.vyMax;
 
 	// apply the friction
-	if (this.vx - this.frict > 0) {
-	    this.vx -= this.frict;
+	if (this.vx - this.frictX > 0) {
+	    this.vx -= this.frictX;
 	}
-	else if (this.vx + this.frict < 0) {
-	    this.vx += this.frict;
+	else if (this.vx + this.frictX < 0) {
+	    this.vx += this.frictX;
 	} else this.vx = 0;
+
+	if (this.vy - this.frictY > 0) {
+	    this.vy -= this.frictY;
+	}
+	else if (this.vy + this.frictY < 0) {
+	    this.vy += this.frictY;
+	} else this.vy = 0;
 
 	// apply the gravity
 	this.vy += this.g;
@@ -157,22 +165,22 @@ TopDownSprite.prototype.updateAction = function() {
 TopDownSprite.prototype.updateMovement = function() {    
     // move player
     if (this.movL && !this.movR) {
-	this.vx = -this.forceX;
+	this.ax = -this.forceX;
     }
     if (this.movR && !this.movL) {
-	this.vx = this.forceX;
+	this.ax = this.forceX;
     }
     if (this.movU && !this.movD) {
-	this.vy = -this.forceY;
+	this.ay = -this.forceY;
     }
     if (this.movD && !this.movU) {
-	this.vy = this.forceY;
+	this.ay = this.forceY;
     }
     if (!this.movL && !this.movR) {
-	this.vx = 0;
+	this.ax = 0;
     }
     if (!this.movU && !this.movD) {
-	this.vy = 0;
+	this.ay = 0;
     }
 };
 

@@ -10,20 +10,12 @@ function findSceneryCollisionCandidates(sprite, map) {
     for (var i = 0; i < map.collisionLayers.length; i++) {
 	var collisionLayer = map.collisionLayers[i];
 
-	collisionCandidates.push(collisionLayer[spriteMapX][spriteMapY]);    
-
-	if (sprite.vx < 0 && sprite.x > map.tileW) {
-	    collisionCandidates.push(collisionLayer[spriteMapX - 1][spriteMapY]);
-	} else if (sprite.vx > 0 && sprite.x + sprite.w < map.w - map.tileW) {
-	    collisionCandidates.push(collisionLayer[spriteMapX + 1][spriteMapY]);
-	}
-	if (sprite.vy < 0) {
-	    collisionCandidates.push(collisionLayer[spriteMapX][spriteMapY - 1]);
-	} else if (sprite.vy > 0) {
-	    collisionCandidates.push(collisionLayer[spriteMapX][spriteMapY + 1]);
+	for (var cols = spriteMapX - 1; cols < spriteMapX + 2; cols++) {
+	    for (var rows = spriteMapY - 1; rows < spriteMapY + 2; rows++) {
+		collisionCandidates.push(collisionLayer[cols][rows]);
+	    }
 	}
     }
-
     return collisionCandidates;
 }
 
@@ -76,7 +68,7 @@ function testRectangle(r1, r2, mode)
 		    
 		    //Move the rectangle out of the collision
 		    if (mode === BLOCK) {r1.y = r1.y + overlapY; r1.vy = 0;}
-		    else if (mode === BOUNCE) r1.vy = -r1.vy;
+		    else if (mode === BOUNCE) {r1.y = r1.y + overlapY; r1.vy = -r1.vy;}
 		}
 		else 
 		{
@@ -84,7 +76,7 @@ function testRectangle(r1, r2, mode)
 		    
 		    //Move the rectangle out of the collision
 		    if (mode === BLOCK) {r1.y = r1.y - overlapY; r1.vy = 0;}
-		    else if (mode === BOUNCE) r1.vy = -r1.vy;		
+		    else if (mode === BOUNCE) {r1.y = r1.y - overlapY; r1.vy = -r1.vy;}
 		}		
 	    } 
 	    else 
@@ -97,7 +89,7 @@ function testRectangle(r1, r2, mode)
 		    
 		    //Move the rectangle out of the collision
 		    if (mode === BLOCK) {r1.x = r1.x + overlapX; r1.vx = 0;}
-		    else if (mode === BOUNCE) r1.vx = -r1.vx;
+		    if (mode === BLOCK) {r1.x = r1.x + overlapX; r1.vx = -r1.vx;}
 		}
 		else 
 		{
@@ -105,7 +97,7 @@ function testRectangle(r1, r2, mode)
 		    
 		    //Move the rectangle out of the collision
 		    if (mode === BLOCK) {r1.x = r1.x - overlapX; r1.vx = 0;}
-		    else if (mode === BOUNCE) r1.vx = -r1.vx;
+		    if (mode === BLOCK) {r1.x = r1.x - overlapX; r1.vx = -r1.vx;}
 		}
 		
 	    } 
