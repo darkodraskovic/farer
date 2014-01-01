@@ -119,6 +119,7 @@
                  "name":"horizontal",
                  "properties":
                     {
+                     "fragile":"1",
                      "maxDX":"64",
                      "vx":"-60"
                     },

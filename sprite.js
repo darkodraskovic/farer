@@ -24,6 +24,7 @@ function Sprite(name, x, y, w, h, map) {
     this.g = 0;
     this.frictX = 0;
     this.frictY = 0;
+    this.jumpForce = 0;
     this.isJumping = false;
     this.vehicle = null;
     this.isTransported = false;
@@ -40,6 +41,7 @@ function Sprite(name, x, y, w, h, map) {
     this.movR = false;
     this.movU = false;
     this.movD = false;
+    this.jump = false;
     
     this.action = undefined;
 
@@ -53,6 +55,31 @@ function Sprite(name, x, y, w, h, map) {
 		this.isTransported = false;
 		this.vehicle = null;
 	    }
+	}
+    };
+    this.updateMovement = function() {    
+	// move player
+	if (this.movL && !this.movR) {
+	    this.ax = -this.forceX;
+	}
+	if (this.movR && !this.movL) {
+	    this.ax = this.forceX;
+	}
+	if (this.movU && !this.movD) {
+	    this.ay = -this.forceY;
+	}
+	if (this.movD && !this.movU) {
+	    this.ay = this.forceY;
+	}
+	if (!this.movL && !this.movR) {
+	    this.ax = 0;
+	}
+	if (!this.movU && !this.movD) {
+	    this.ay = 0;
+	}
+	if (this.jump && !this.isJumping) {
+	    this.isJumping = true;
+	    this.vy = -this.jumpForce;
 	}
     };
     
@@ -127,7 +154,6 @@ function Sprite(name, x, y, w, h, map) {
     };
 }
 
-
 // TOPDOWN SPRITE
 function TopDownSprite() {};
 TopDownSprite.prototype = new Sprite("top-down", 0, 0, 0, 0);
@@ -170,28 +196,6 @@ TopDownSprite.prototype.updateAction = function() {
     }
 };
 
-TopDownSprite.prototype.updateMovement = function() {    
-    // move player
-    if (this.movL && !this.movR) {
-	this.ax = -this.forceX;
-    }
-    if (this.movR && !this.movL) {
-	this.ax = this.forceX;
-    }
-    if (this.movU && !this.movD) {
-	this.ay = -this.forceY;
-    }
-    if (this.movD && !this.movU) {
-	this.ay = this.forceY;
-    }
-    if (!this.movL && !this.movR) {
-	this.ax = 0;
-    }
-    if (!this.movU && !this.movD) {
-	this.ay = 0;
-    }
-};
-
 // PLATFORMER SPRITE
 function PlatformerSprite() {};
 PlatformerSprite.prototype = new Sprite("platformer", 0, 0, 0, 0);
@@ -217,32 +221,6 @@ PlatformerSprite.prototype.updateAction = function() {
     }
     
 };
-
-
-PlatformerSprite.prototype.updateMovement = function() {	
-    // move player
-    if (this.movL && !this.movR) {
-	this.ax = -this.forceX;
-    }
-    if (this.movR && !this.movL) {
-	this.ax = this.forceX;
-    }
-    if (this.movU && !this.isJumping) {
-	this.isJumping = true;
-	this.vy = -this.forceY;
-    }
-    // if (this.movD && !this.movU) {
-    //     this.vy = this.forceY;
-    // }
-    if (!this.movL && !this.movR) {
-	this.ax = 0;
-    }
-    // if (!this.movU && !this.movD) {
-    //     this.vy = 0;
-    // }
-
-};
-
 
 // GAME OBJECT
 function GameObject() {

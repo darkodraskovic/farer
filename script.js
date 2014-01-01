@@ -110,7 +110,8 @@ function initializeGame() {
     platformerPlayer.w = 32;
     platformerPlayer.h = 32;
     platformerPlayer.forceX = 86;
-    platformerPlayer.forceY = 460;
+    platformerPlayer.forceY = 0;
+    platformerPlayer.jumpForce = 460;
     platformerPlayer.vxMax = 120;
     platformerPlayer.vyMax = 1000;
     platformerPlayer.g = 20;    
@@ -177,13 +178,16 @@ function playGame() {
 
     for (i = 0; i < map.objectLayers.length; i++) {
 	objects = map.objectLayers[i];
-	for (var j = 0; j < objects.length; j++) {
+	for (j = 0; j < objects.length; j++) {
 	    if (testCollisionMask(player, objects[j])) {
 		collisionSide = testRectangle(player, objects[j], BLOCK);
 		if (collisionSide === "bottom") {
 		    player.isJumping = false;
-		    if (objects[j] instanceof MovingPlatform && player.vehicle === null) {
-			player.vehicle = objects[j];
+		    if (objects[j] instanceof MovingPlatform) {
+			if (objects[j].hasOwnProperty("fragile"))
+			    map.objectLayers[i].splice(j, 1);
+			else if (player.vehicle === null)
+			    player.vehicle = objects[j];
 		    }
 		} else if (collisionSide === "top") {
 		    player.vy = objects[j].vy;

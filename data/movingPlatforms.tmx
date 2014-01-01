@@ -1593,6 +1593,7 @@
   </object>
   <object name="horizontal" x="32" y="736" width="128" height="32">
    <properties>
+    <property name="fragile" value="1"/>
     <property name="maxDX" value="64"/>
     <property name="vx" value="-60"/>
    </properties>

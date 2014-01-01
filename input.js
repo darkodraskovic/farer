@@ -3,7 +3,8 @@
 var LEFT = 37;
 var RIGHT = 39;   
 var UP = 38;   
-var DOWN = 40;   
+var DOWN = 40;
+var JUMP = 88;
 
 
 function setInput(player) {
@@ -22,6 +23,9 @@ function setInput(player) {
 	    break;	   
 	case DOWN:
 	    player.movD = true;
+	    break;
+	case JUMP:
+	    player.jump = true;
 	    break;
 	default: 
 	    break;
@@ -42,7 +46,9 @@ function setInput(player) {
 	    break;	   
 	case DOWN:
 	    player.movD = false;
-	    break;	   	
+	    break;
+	case JUMP:
+	    player.jump = false;
 	default:
 	    break;
 	}
