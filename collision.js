@@ -5,17 +5,37 @@ var BOUNCE = 2;
 function findSceneryCollisionCandidates(sprite, map) {
     var collisionCandidates = [];    
     
-    var spriteMapX = Math.floor(sprite.centerX() / map.tileW);
-    var spriteMapY = Math.floor(sprite.centerY() / map.tileH);
-    for (var i = 0; i < map.collisionLayers.length; i++) {
-	var collisionLayer = map.collisionLayers[i];
+    var spriteMapX = Math.round((sprite.centerX() / map.tileW));
+    var spriteMapY = Math.round((sprite.centerY() / map.tileH));
 
-	for (var cols = spriteMapX - 1; cols < spriteMapX + 2; cols++) {
-	    for (var rows = spriteMapY - 1; rows < spriteMapY + 2; rows++) {
-		collisionCandidates.push(collisionLayer[cols][rows]);
-	    }
-	}
+   //  for (var i = 0; i < map.collisionLayers.length; i++) {
+   //  	var collisionLayer = map.collisionLayers[i];	
+	
+   //  	collisionCandidates.push(collisionLayer[spriteMapX][spriteMapY]);
+   // 	if (sprite.totalVX > 0) {
+   // 	    collisionCandidates.push(collisionLayer[spriteMapX + 1][spriteMapY]);
+   // 	} else if (sprite.totalVX < 0) {
+   // 	    collisionCandidates.push(collisionLayer[spriteMapX - 1][spriteMapY]);
+   // 	} 
+
+   // 	if (sprite.totalVY > 0) {
+   // 	    collisionCandidates.push(collisionLayer[spriteMapX][spriteMapY + 1]);
+   // 	} else if (sprite.totalVY < 0) {
+   // 	    collisionCandidates.push(collisionLayer[spriteMapX][spriteMapY - 1]);
+   // 	}
+   // }
+
+
+    for (var i = 0; i < map.collisionLayers.length; i++) {
+    	var collisionLayer = map.collisionLayers[i];
+
+    	for (var cols = spriteMapX - 1; cols < spriteMapX + 2; cols++) {
+    	    for (var rows = spriteMapY - 1; rows < spriteMapY + 2; rows++) {
+    		collisionCandidates.push(collisionLayer[cols][rows]);
+    	    }
+    	}
     }
+
     return collisionCandidates;
 }
 

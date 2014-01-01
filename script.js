@@ -105,8 +105,8 @@ function initializeGame() {
     topDownPlayerAnimator.parseImageData();
 
     platformerPlayer = new PlatformerSprite();
-    platformerPlayer.x = platformerMap.tileW * 5;
-    platformerPlayer.y = platformerMap.h - platformerMap.tileH * 8;
+    platformerPlayer.x = platformerMap.tileW * 4;
+    platformerPlayer.y = platformerMap.tileH * 10;
     platformerPlayer.w = 32;
     platformerPlayer.h = 32;
     platformerPlayer.forceX = 86;
@@ -133,7 +133,6 @@ function initializeGame() {
 	playerAnimator = platformerPlayerAnimator;
 	map = platformerMap;
     }
-
 
     // INPUT SETUP
     setInput(player);
@@ -168,12 +167,12 @@ function playGame() {
     var collisionCandidates = findSceneryCollisionCandidates(player, map);
 
     for (var i = 0; i < collisionCandidates.length; i++) {
-	if (collisionCandidates[i] != null) {
-	    var collisionSide = testRectangle(player, collisionCandidates[i], BLOCK);
-	    if (collisionSide === "bottom") {		
-		player.isJumping = false;		
-	    }
-	}
+    	if (collisionCandidates[i] != null) {
+    	    var collisionSide = testRectangle(player, collisionCandidates[i], BLOCK);
+    	    if (collisionSide === "bottom") {		
+    		player.isJumping = false;		
+    	    }
+    	}
     }
 
     for (i = 0; i < map.objectLayers.length; i++) {

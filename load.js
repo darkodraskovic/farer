@@ -24,7 +24,7 @@ var loadData = function() {
     };
     xhr.send();
 
-    xhr.open("GET", "data/platformerMap.json", false);
+    xhr.open("GET", "data/movingPlatforms.json", false);
     xhr.onload = function() {
 	loadHandler();
 	platformerMapData = JSON.parse(this.responseText);
@@ -56,7 +56,7 @@ function loadImages() {
     pfPlayerTiles.src = "images/raiser_anim.png";
 
     pfMapTiles.addEventListener("load", loadHandler, false);
-    pfMapTiles.src = "images/platformertiles.png";
+    pfMapTiles.src = "images/outdoorTiles.png";
 }
 
 function loadHandler() {

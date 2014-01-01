@@ -13,8 +13,10 @@ function Sprite(name, x, y, w, h, map) {
     this.h = h;
     this.vx = 0;
     this.vxMax = 0;
+    this.totalVX = 0;
     this.vy = 0;
     this.vyMax = 0;
+    this.totalVY = 0;
     this.ax = 0;
     this.ay = 0;
     this.forceX = 0;
@@ -82,15 +84,21 @@ function Sprite(name, x, y, w, h, map) {
 	// apply the gravity
 	this.vy += this.g;
 
-	this.x += this.vx / TPS;
-	this.y += this.vy / TPS;
-
 	// apply the vehicle speed
 	if (this.vehicle) {
-	    this.x += this.vehicle.vx / TPS;
-	    this.y += this.vehicle.vy / TPS;
+	    this.totalVX = this.vx + this.vehicle.vx;
+	    this.totalVY = this.vy + this.vehicle.vy;
+	}
+	else {
+	    this.totalVX = this.vx;
+	    this.totalVY = this.vy;
 	}
 
+	// update the position
+	this.x += this.totalVX / TPS;
+	this.y += this.totalVY / TPS;
+
+	// keep inside map boundaries
 	this.x = Math.max(0, Math.min(this.x, this.map.w - this.w));
 	this.y = Math.max(0, Math.min(this.y, this.map.h - this.h));
 
@@ -279,8 +287,8 @@ MovingActiveObject.prototype.updatePosition = function() {
     this.vx += this.ax;
     this.vy += this.ay;
 
-    this.x += Math.floor(this.vx / TPS);
-    this.y += Math.floor(this.vy / TPS);
+    this.x += Math.round(this.vx / TPS);
+    this.y += Math.round(this.vy / TPS);
 
 };
 
@@ -298,19 +306,23 @@ MovingPlatform.prototype.maxDY = 0;
 
 MovingPlatform.prototype.switchDirection = function() {
 
-    if (this.maxDX > 0) {
+    if (this.maxDX) {
 	if (this.x > this.origX + this.maxDX) {
 	    this.vx = -this.vx;
+	    this.x = this.origX + this.maxDX;
 	} else if (this.x < this.origX - this.maxDX) {
 	    this.vx = -this.vx;
+	    this.x = this.origX - this.maxDX;
 	}
     }
 
     if (this.maxDY) {
 	if (this.y > this.origY + this.maxDY) {
+	    this.y = this.origY + this.maxDY;
 	    this.vy = -this.vy;
 	} else if (this.y < this.origY - this.maxDY) {
 	    this.vy = -this.vy;
+	    this.y = this.origY - this.maxDY;
 	}
     }
 
