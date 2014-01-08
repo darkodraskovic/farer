@@ -5,6 +5,10 @@
          "height":32,
          "name":"background",
          "opacity":1,
+         "properties":
+            {
+             "background":"true"
+            },
          "type":"tilelayer",
          "visible":true,
          "width":32,
@@ -131,6 +135,10 @@
          "height":32,
          "name":"masks1",
          "opacity":1,
+         "properties":
+            {
+             "background":"true"
+            },
          "type":"tilelayer",
          "visible":true,
          "width":32,

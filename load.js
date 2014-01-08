@@ -1,5 +1,5 @@
 // LOAD DATA
-var assetsToLoad = 8;
+var assetsToLoad = 11;
 var loadedAssets = 0;
 
 var topDownMapData;
@@ -7,6 +7,9 @@ var topDownSheet;
 
 var platformerMapData;
 var platformerSheet;
+
+var pacmanMapData;
+var pacmanSpriteData;
 
 var loadData = function() {
     var xhr = new XMLHttpRequest();
@@ -24,7 +27,7 @@ var loadData = function() {
     };
     xhr.send();
 
-    xhr.open("GET", "data/movingPlatforms.json", false);
+    xhr.open("GET", "data/platformerMap.json", false);
     xhr.onload = function() {
 	loadHandler();
 	platformerMapData = JSON.parse(this.responseText);
@@ -38,12 +41,27 @@ var loadData = function() {
     };
     xhr.send();
 
+    xhr.open("GET", "data/pacmanMap.json", false);
+    xhr.onload = function() {
+	loadHandler();
+	pacmanMapData = JSON.parse(this.responseText);
+    };
+    xhr.send();
+
+    xhr.open("GET", "data/pacmanSprite.json", false);
+    xhr.onload = function() {
+	loadHandler();
+	pacmanSpriteData = JSON.parse(this.responseText);
+    };
+    xhr.send();
+
 };
 
 var tdMapTiles = new Image();
 var tdPlayerTiles = new Image();
 var pfPlayerTiles = new Image();
 var pfMapTiles = new Image();
+var pacmanTiles = new Image();
 
 function loadImages() {
     tdMapTiles.addEventListener("load", loadHandler, false);
@@ -56,7 +74,10 @@ function loadImages() {
     pfPlayerTiles.src = "images/raiser_anim.png";
 
     pfMapTiles.addEventListener("load", loadHandler, false);
-    pfMapTiles.src = "images/outdoorTiles.png";
+    pfMapTiles.src = "images/platformertiles.png";
+
+    pacmanTiles.addEventListener("load", loadHandler, false);
+    pacmanTiles.src = "images/pacmanTiles.png";
 }
 
 function loadHandler() {

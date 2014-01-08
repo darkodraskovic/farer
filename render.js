@@ -17,25 +17,48 @@ function renderMap(map, player){
 
     // render the map
     var i, j, k;
+    var colInd = 0;
     var objInd = 0;
     for (i = 0; i < map.layers.length; i++) {
 	// render background and collision layers
 	if ("data" in map.layers[i]) {
     	    var data = map.layers[i]["data"];
-    	    for (j = offset[0]; j <= (offset[0] + map.viewportW); j++) {
-    		for (k = offset[1]; k <= (offset[1] + map.viewportH); k++) {
-    		    var cell = k * map.cols + j;
-    		    if (data[cell] > 0) {
-    			ctx.drawImage(map.img,
-    		    		      ((data[cell] - 1) % map.tileCols) * map.tileW,
-    				      Math.floor((data[cell] - 1) / map.tileCols) * map.tileH,
-    		    		      map.tileW, map.tileH,
-    		    		      j * map.tileW, k * map.tileH,
-    				      map.tileW, map.tileH);
+	    if (map.layers[i]["properties"]["background"]) {
+    		for (j = offset[0]; j <= (offset[0] + map.viewportW); j++) {
+    		    for (k = offset[1]; k <= (offset[1] + map.viewportH); k++) {
+    			var cell = k * map.cols + j;
+    			if (data[cell] > 0) {
+    			    ctx.drawImage(map.img,
+    		    			  ((data[cell] - 1) % map.tileCols) * map.tileW,
+    					  Math.floor((data[cell] - 1) / map.tileCols) * map.tileH,
+    		    			  map.tileW, map.tileH,
+    		    			  j * map.tileW, k * map.tileH,
+    					  map.tileW, map.tileH);
+    			}
     		    }
-    		}
-	    }
-    	}
+		}
+    	    }
+	    if (map.layers[i]["properties"]["collision"]) {
+    		for (j = offset[0]; j <= (offset[0] + map.viewportW); j++) {
+    		    for (k = offset[1]; k <= (offset[1] + map.viewportH); k++) {
+    			var cell = k * map.cols + j;
+    			if (data[cell] > 0 && map.collisionLayers[colInd][j] && map.collisionLayers[colInd][j][k]) {
+			    var colObj =  map.collisionLayers[colInd][j][k];
+			    if (colObj.exists) {
+    				ctx.drawImage(map.img,
+    		    			      ((data[cell] - 1) % map.tileCols) * map.tileW,
+    					      Math.floor((data[cell] - 1) / map.tileCols) * map.tileH,
+    		    			      map.tileW, map.tileH,
+    		    			      j * map.tileW, k * map.tileH,
+    					      map.tileW, map.tileH);
+			    }
+    			}
+    		    }
+		}
+		colInd++;
+    	    }
+
+	}
 	// render object layers
 	else if ("objects" in map.layers[i] && map.objectLayers[objInd]) {
 	    var objects = map.objectLayers[objInd];

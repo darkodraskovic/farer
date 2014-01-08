@@ -4,6 +4,9 @@
   <image source="../../../../../../../../home/draskovic/Radovi/AppDev/Emacs/JS/FromScratch/Farer/images/outdoorTiles.png" width="256" height="256"/>
  </tileset>
  <layer name="background" width="16" height="48">
+  <properties>
+   <property name="background" value="true"/>
+  </properties>
   <data>
    <tile gid="33"/>
    <tile gid="33"/>

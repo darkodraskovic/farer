@@ -1,0 +1,23 @@
+{
+    "image": {
+	"name": "pacmanTiles.png",
+	"imagewidth": 768,
+	"imageheight": 600,
+	"tilewidth": 48,
+	"tileheight": 48,
+	"cols": 12,
+	"rows": 7
+    },
+    "sequences": {
+	"walking": {
+	    "frames": [0, 7, 8, 7, 0],
+	    "framerate": 10,
+	    "loop": true
+	},
+	"standing": {
+	    "frames": [0, 7, 8, 7, 0],
+	    "framerate": 10,
+	    "loop": true
+	}
+    }
+}

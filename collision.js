@@ -1,37 +1,20 @@
-var COLLISION_ONLY = 0;
-var BLOCK = 1;
-var BOUNCE = 2;
-
 function findSceneryCollisionCandidates(sprite, map) {
     var collisionCandidates = [];    
     
-    var spriteMapX = Math.round((sprite.centerX() / map.tileW));
-    var spriteMapY = Math.round((sprite.centerY() / map.tileH));
-
-   //  for (var i = 0; i < map.collisionLayers.length; i++) {
-   //  	var collisionLayer = map.collisionLayers[i];	
-	
-   //  	collisionCandidates.push(collisionLayer[spriteMapX][spriteMapY]);
-   // 	if (sprite.totalVX > 0) {
-   // 	    collisionCandidates.push(collisionLayer[spriteMapX + 1][spriteMapY]);
-   // 	} else if (sprite.totalVX < 0) {
-   // 	    collisionCandidates.push(collisionLayer[spriteMapX - 1][spriteMapY]);
-   // 	} 
-
-   // 	if (sprite.totalVY > 0) {
-   // 	    collisionCandidates.push(collisionLayer[spriteMapX][spriteMapY + 1]);
-   // 	} else if (sprite.totalVY < 0) {
-   // 	    collisionCandidates.push(collisionLayer[spriteMapX][spriteMapY - 1]);
-   // 	}
-   // }
-
+    // var spriteCenterX = Math.floor(sprite.centerX() / map.tileW);
+    // var spriteCenterY = Math.floor(sprite.centerY() / map.tileH);
+    var spriteLeft = Math.floor(sprite.x / map.tileW);
+    var spriteRight = Math.floor((sprite.x + sprite.w) / map.tileW);
+    var spriteTop = Math.floor(sprite.y / map.tileH);
+    var spriteBottom = Math.floor((sprite.y + sprite.h) / map.tileH);
 
     for (var i = 0; i < map.collisionLayers.length; i++) {
     	var collisionLayer = map.collisionLayers[i];
 
-    	for (var cols = spriteMapX - 1; cols < spriteMapX + 2; cols++) {
-    	    for (var rows = spriteMapY - 1; rows < spriteMapY + 2; rows++) {
-    		collisionCandidates.push(collisionLayer[cols][rows]);
+    	for (var cols = spriteLeft - 1; cols < spriteRight + 1; cols++) {
+    	    for (var rows = spriteTop - 1; rows < spriteBottom + 1; rows++) {
+    		if (collisionLayer[cols] && collisionLayer[cols][rows])
+    		    collisionCandidates.push(collisionLayer[cols][rows]);
     	    }
     	}
     }
@@ -48,9 +31,18 @@ function testCollisionMask(sprite1, sprite2) {
 }
 
 // if block = true then add the blocking behavior
-function testRectangle(r1, r2, mode)
+function testRectangle(r1, r2, block, bounce)
 {
 
+    if (typeof bounce === "undefined") {
+	bounce = false;
+    }
+
+    if (typeof block === "undefined") {
+	bounce = false;
+    }
+
+    
     //A variable to tell us which side the collision is occurring on
     var collisionSide = "";
     
@@ -87,17 +79,18 @@ function testRectangle(r1, r2, mode)
 		    collisionSide = "top";
 		    
 		    //Move the rectangle out of the collision
-		    if (mode === BLOCK) {r1.y = r1.y + overlapY; r1.vy = 0;}
-		    else if (mode === BOUNCE) {r1.y = r1.y + overlapY; r1.vy = -r1.vy;}
+		    if (block) r1.y = r1.y + overlapY;		    
 		}
 		else 
 		{
 		    collisionSide = "bottom";
 		    
 		    //Move the rectangle out of the collision
-		    if (mode === BLOCK) {r1.y = r1.y - overlapY; r1.vy = 0;}
-		    else if (mode === BOUNCE) {r1.y = r1.y - overlapY; r1.vy = -r1.vy;}
-		}		
+		    if (block) r1.y = r1.y - overlapY;
+		}
+		if (bounce) {
+		    r1.vy = r1.vy * r1.bounce;
+		}
 	    } 
 	    else 
 	    {
@@ -108,18 +101,18 @@ function testRectangle(r1, r2, mode)
 		    collisionSide = "left";
 		    
 		    //Move the rectangle out of the collision
-		    if (mode === BLOCK) {r1.x = r1.x + overlapX; r1.vx = 0;}
-		    if (mode === BLOCK) {r1.x = r1.x + overlapX; r1.vx = -r1.vx;}
+		    if (block) r1.x = r1.x + overlapX;
 		}
 		else 
 		{
 		    collisionSide = "right";
 		    
 		    //Move the rectangle out of the collision
-		    if (mode === BLOCK) {r1.x = r1.x - overlapX; r1.vx = 0;}
-		    if (mode === BLOCK) {r1.x = r1.x - overlapX; r1.vx = -r1.vx;}
+		    if (block) r1.x = r1.x - overlapX;
 		}
-		
+		if (bounce) {
+		    r1.vx = r1.vx * r1.bounce;		
+		}
 	    } 
 	}
 	else 

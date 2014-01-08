@@ -74,6 +74,9 @@ var platformerMap;
 var topDownPlayer;
 var topDownPlayerAnimator;
 var topDownMap;
+var pacmanMap;
+var pacmanPlayer;
+var pacmanPlayerAnimator;
 
 function initializeGame() {
     // INIT MAP
@@ -85,16 +88,19 @@ function initializeGame() {
     platformerMap.initMap(platformerMapData, canvas, pfMapTiles);
     platformerMap.generateCollisionLayers();
 
+    var pacmanMap = new Map();
+    pacmanMap.initMap(pacmanMapData, canvas, pacmanTiles);
+    pacmanMap.generateCollisionLayers();
 //    console.log(topDownMap.objectLayers);
     
     // INIT PLAYER
     topDownPlayer = new TopDownSprite();
-    topDownPlayer.forceX = 30;
-    topDownPlayer.forceY = 30;
-    topDownPlayer.vxMax = 120;
-    topDownPlayer.vyMax = 120;
-    topDownPlayer.frictX = 10;
-    topDownPlayer.frictY = 10;    
+    topDownPlayer.forceX = 1.5;
+    topDownPlayer.forceY = 1.5;
+    topDownPlayer.vxMax = 2.5;
+    topDownPlayer.vyMax = 2.5;
+    topDownPlayer.frictX = 1;
+    topDownPlayer.frictY = 1;    
     topDownPlayer.x = 312;
     topDownPlayer.y = 312;
     topDownPlayer.w = 12;
@@ -109,30 +115,49 @@ function initializeGame() {
     platformerPlayer.y = platformerMap.tileH * 10;
     platformerPlayer.w = 32;
     platformerPlayer.h = 32;
-    platformerPlayer.forceX = 86;
+    platformerPlayer.forceX = 60;
     platformerPlayer.forceY = 0;
-    platformerPlayer.jumpForce = 460;
+    platformerPlayer.jumpForce = 380;
     platformerPlayer.vxMax = 120;
-    platformerPlayer.vyMax = 1000;
-    platformerPlayer.g = 20;    
-    platformerPlayer.frictX = 4;
+    platformerPlayer.vyMax = 600;
+    platformerPlayer.g = 14;    
+    platformerPlayer.frictX = 0.93;
+    platformerPlayer.frictY = 1;
     platformerPlayer.map = platformerMap;
-
 
     platformerPlayerAnimator = new Animator(pfPlayerTiles, platformerSheet, platformerPlayer);
     platformerPlayerAnimator.parseImageData();
-    
 
-    // TOPDOWN or PLATFORMER
+    pacmanPlayer = new TopDownSprite();
+    pacmanPlayer.forceX = 100;
+    pacmanPlayer.forceY = 100;
+    pacmanPlayer.vxMax = 240;
+    pacmanPlayer.vyMax = 240;
+    pacmanPlayer.x = 48;
+    pacmanPlayer.y = 48;
+    pacmanPlayer.w = 48;
+    pacmanPlayer.h = 48;
+    pacmanPlayer.frictX = 1;
+    pacmanPlayer.frictY = 1;
+    pacmanPlayer.map = pacmanMap;
+    
+    pacmanPlayerAnimator = new Animator(pacmanTiles, pacmanSpriteData, pacmanPlayer);
+    pacmanPlayerAnimator.parseImageData();
+    
+    // TOPDOWN or PLATFORMER or PACMAN
     var mode = "p"; 
     if (mode === "t") {
 	player = topDownPlayer;
 	playerAnimator = topDownPlayerAnimator;
 	map = topDownMap;
-    } else {
+    } else if (mode === "p"){
 	player = platformerPlayer;
 	playerAnimator = platformerPlayerAnimator;
 	map = platformerMap;
+    } else if (mode === "a") {
+	player = pacmanPlayer;
+	playerAnimator = pacmanPlayerAnimator;
+	map = pacmanMap;
     }
 
     // INPUT SETUP
@@ -168,11 +193,29 @@ function playGame() {
     var collisionCandidates = findSceneryCollisionCandidates(player, map);
 
     for (var i = 0; i < collisionCandidates.length; i++) {
-    	if (collisionCandidates[i] != null) {
-    	    var collisionSide = testRectangle(player, collisionCandidates[i], BLOCK);
-    	    if (collisionSide === "bottom") {		
-    		player.isJumping = false;		
-    	    }
+    	if (collisionCandidates[i] != null && collisionCandidates[i].exists) {
+    	    var collisionSide = testRectangle(player, collisionCandidates[i], true);
+    	    if (collisionSide !== "none") {
+		// if (collisionCandidates[i]["name"] && collisionCandidates[i]["name"] === "dot") {
+		//     collisionCandidates[i].exists = false;
+		// }
+		if (collisionSide == "bottom" && player.vy >= 0) {
+		    player.onGround = true;
+		    player.vy = -player.g;
+		    player.movGround = null;
+		} else if (collisionSide == "top" && player.vy <= 0) {
+		    player.vy = 0;
+		} else if (collisionSide == "right" && player.vx >= 0) {
+		    player.vx = 0;
+		}  else if (collisionSide == "left" && player.vx <= 0) {
+		    player.vx = 0;
+		}
+		if (collisionSide !== "bottom" && player.vy > 0)  {
+		    player.onGround = false;
+		    if (player.movGround)
+			player.movGround = null;
+		}
+	    }
     	}
     }
 
@@ -180,19 +223,26 @@ function playGame() {
 	objects = map.objectLayers[i];
 	for (j = 0; j < objects.length; j++) {
 	    if (testCollisionMask(player, objects[j])) {
-		collisionSide = testRectangle(player, objects[j], BLOCK);
-		if (collisionSide === "bottom") {
-		    player.isJumping = false;
-		    if (objects[j] instanceof MovingPlatform) {
-			if (objects[j].hasOwnProperty("fragile"))
-			    map.objectLayers[i].splice(j, 1);
-			else if (player.vehicle === null)
-			    player.vehicle = objects[j];
+		collisionSide = testRectangle(player, objects[j], true);
+    		if (collisionSide !== "none") {
+		    if (collisionSide == "bottom" && player.vy >= 0) {
+			player.onGround = true;
+			player.movGround = objects[j];
+			player.vy = -player.g;
+		    } else if (collisionSide == "top" && player.vy <= 0) {
+			player.vy = 0;
+		    } else if (collisionSide == "right" && player.vx >= 0) {
+			player.vx = 0;
+		    }  else if (collisionSide == "left" && player.vx <= 0) {
+			player.vx = 0;
 		    }
-		} else if (collisionSide === "top") {
-		    player.vy = objects[j].vy;
+		    if (collisionSide !== "bottom" && player.vy > 0)  {
+			player.onGround = false;
+			if (player.movGround)
+			    player.movGround = null;
+		    }
 		}
-	    } 
+	    }
 	}
     }
 

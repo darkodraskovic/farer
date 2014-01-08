@@ -25,9 +25,9 @@ function Sprite(name, x, y, w, h, map) {
     this.frictX = 0;
     this.frictY = 0;
     this.jumpForce = 0;
-    this.isJumping = false;
-    this.vehicle = null;
-    this.isTransported = false;
+    this.movGround = null;
+    this.onGround = true;
+    this.bounce = -0.5;
     this.rotation = 0;
     this.map = map;
 
@@ -45,18 +45,6 @@ function Sprite(name, x, y, w, h, map) {
     
     this.action = undefined;
 
-    this.updateVehicle = function() {
-	if (!this.isTransported && this.vehicle) {
-	    this.isTransported = true;
-	}
-	else if (this.isTransported) {
-	    if (this.x + this.w < this.vehicle.x || this.x > this.vehicle.x + this.vehicle.w ||
-		this.y < this.vehicle.y - this.h - this.g || this.y > this.vehicle.y + this.vehicle.h) {
-		this.isTransported = false;
-		this.vehicle = null;
-	    }
-	}
-    };
     this.updateMovement = function() {    
 	// move player
 	if (this.movL && !this.movR) {
@@ -77,8 +65,10 @@ function Sprite(name, x, y, w, h, map) {
 	if (!this.movU && !this.movD) {
 	    this.ay = 0;
 	}
-	if (this.jump && !this.isJumping) {
-	    this.isJumping = true;
+	if (this.jump && this.onGround) {
+	    this.onGround = false;
+	    if (this.movGround)
+		this.movGround = null;
 	    this.vy = -this.jumpForce;
 	}
     };
@@ -91,39 +81,31 @@ function Sprite(name, x, y, w, h, map) {
 
 	if (Math.abs(this.vy + this.ay) < this.vyMax) {
 	    this.vy += this.ay;
-	} else this.vy = (Math.abs(this.vy)/this.vy) * this.vyMax;
+	} else {
+	    this.vy = (Math.abs(this.vy)/this.vy) * this.vyMax;
+	}
 
 	// apply the friction
-	if (this.vx - this.frictX > 0) {
-	    this.vx -= this.frictX;
-	}
-	else if (this.vx + this.frictX < 0) {
-	    this.vx += this.frictX;
-	} else this.vx = 0;
-
-	if (this.vy - this.frictY > 0) {
-	    this.vy -= this.frictY;
-	}
-	else if (this.vy + this.frictY < 0) {
-	    this.vy += this.frictY;
-	} else this.vy = 0;
+	this.vx *= this.frictX;
+	this.vy *= this.frictY;
 
 	// apply the gravity
 	this.vy += this.g;
-
-	// apply the vehicle speed
-	if (this.vehicle) {
-	    this.totalVX = this.vx + this.vehicle.vx;
-	    this.totalVY = this.vy + this.vehicle.vy;
+	
+	if (this.movGround) {
+	    if (this.x < this.movGround.x - this.w || this.x > this.movGround) {
+		this.vx += this.movGround.vx;
+		this.movGround = null;
+	    }
+	    else {
+		this.x += this.movGround.vx / TPS;
+		this.y += this.movGround.vy / TPS;
+	    }
 	}
-	else {
-	    this.totalVX = this.vx;
-	    this.totalVY = this.vy;
-	}
-
+	
 	// update the position
-	this.x += this.totalVX / TPS;
-	this.y += this.totalVY / TPS;
+	this.x += Math.round(this.vx / TPS);
+	this.y += Math.round(this.vy / TPS);
 
 	// keep inside map boundaries
 	this.x = Math.max(0, Math.min(this.x, this.map.w - this.w));
@@ -135,7 +117,6 @@ function Sprite(name, x, y, w, h, map) {
 	this.updateFacingDirection();
 	this.updateAction();
 	this.updateMovement();
-	this.updateVehicle();
 	this.updatePosition();
     };
     
@@ -199,8 +180,6 @@ TopDownSprite.prototype.updateAction = function() {
 // PLATFORMER SPRITE
 function PlatformerSprite() {};
 PlatformerSprite.prototype = new Sprite("platformer", 0, 0, 0, 0);
-PlatformerSprite.prototype.isJumping = false;
-PlatformerSprite.prototype.isFalling = false;
 PlatformerSprite.prototype.facDir = "right";
 
 PlatformerSprite.prototype.updateFacingDirection = function () {
@@ -211,7 +190,7 @@ PlatformerSprite.prototype.updateFacingDirection = function () {
 };
 
 PlatformerSprite.prototype.updateAction = function() {
-    if (this.isJumping) {
+    if (!this.onGround) {
 	    this.action = "jumping_" + this.facDir;
     }
     else if (this.movL || this.movR) {

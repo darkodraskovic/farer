@@ -5,6 +5,10 @@
          "height":48,
          "name":"background",
          "opacity":1,
+         "properties":
+            {
+             "background":"true"
+            },
          "type":"tilelayer",
          "visible":true,
          "width":16,

@@ -26,6 +26,7 @@ function Map() {
     this.generateCollisionLayers = function() {
 	this.collisionLayers = [];
 	this.objectLayers = [];
+	var prop; var obj;
 	
 	for (var i = 0; i < this.layers.length; i++) {
 	    
@@ -42,14 +43,25 @@ function Map() {
 				var cellCode = data[y * this.cols + x];
     				if (cellCode !== 0) {
 				    var scenObj = new SceneryObject();
+				    for (prop in this.layers[i]["properties"]) {
+					scenObj[prop] = this.layers[i]["properties"][prop];
+					scenObj[prop] = parseFloat(scenObj[prop]);
+					if (isNaN(scenObj[prop])) {
+					    scenObj[prop] =  this.layers[i]["properties"][prop];
+					}
+					
+				    }				    
 				    scenObj.srcX = ((cellCode - 1) % (this.imgW /this.tileW)) * this.tileW;
 				    scenObj.srcY = Math.floor((cellCode - 1) / (this.imgW / this.tileW)) * this.tileH;
 				    scenObj.srcW = this.tileW;
 				    scenObj.srcH = this.tileH;
-				    scenObj.x = x * this.tileW;
-				    scenObj.y = y * this.tileH;
-				    scenObj.w = this.tileW;
-				    scenObj.h = this.tileH;
+				    if (!scenObj["offsetX"]) scenObj["offsetX"] = 0;
+				    if (!scenObj["offsetY"]) scenObj["offsetY"] = 0;
+				    scenObj.x = x * this.tileW + scenObj["offsetX"] * this.tileW;
+				    scenObj.y = y * this.tileH + scenObj["offsetY"] * this.tileH;
+				    scenObj.w = this.tileW - this.tileW * scenObj["offsetX"] * 2; 
+				    scenObj.h = this.tileH - this.tileH * scenObj["offsetY"] * 2; 
+				    scenObj.exists = true;
 				    scenObj.code = cellCode;
 				    this.collisionLayers[this.collisionLayers.length - 1][x][y] = scenObj;
 				} else {
@@ -65,7 +77,6 @@ function Map() {
 		if (this.layers[i].hasOwnProperty("properties")) {
 		    var objects = this.layers[i]["objects"];
 		    this.objectLayers[this.objectLayers.length] = [];
-		    var obj; var prop;
 		    // generate tiled object layer
 		    if ("tiled" in this.layers[i]["properties"]) {
 			for (obj in objects) {
@@ -80,10 +91,13 @@ function Map() {
 			    actObj.map = this;
 			    actObj.properties = objects[obj]["properties"];
 			    for (prop in actObj.properties) {
-				actObj[prop] = parseInt(actObj.properties[prop]);
-				if (actObj[prop] === NaN) actObj[prop] = actObj.properties[prop];
-			    }
-			    this.objectLayers[this.objectLayers.length - 1].push(actObj);
+				actObj[prop] = actObj.properties[prop];
+				actObj[prop] = parseFloat(actObj[prop]);
+				if (isNaN(actObj[prop])) {
+				    actObj[prop] =  actObj.properties[prop];
+				}				
+			    }				    
+			    this.objectLayers[this.objectLayers.length - 1].push(actObj);			    
 			}			
 		    } // generate moving objects layer
 		    else if ("moving" in this.layers[i]["properties"]) {
@@ -103,9 +117,12 @@ function Map() {
 				movPlat.map = this;
 				movPlat.properties = objects[obj]["properties"];
 				for (prop in movPlat.properties) {
-				    movPlat[prop] = parseInt(movPlat.properties[prop]);
-				    if (movPlat[prop] === NaN) movPlat[prop] = movPlat.properties[prop];
-				}
+				    movPlat[prop] = movPlat.properties[prop];
+				    movPlat[prop] = parseFloat(movPlat[prop]);
+				    if (isNaN(movPlat[prop])) {
+					movPlat[prop] =  movPlat.properties[prop];
+				    }				
+				}				    
 				this.objectLayers[this.objectLayers.length - 1].push(movPlat);
 			    }
 			}			

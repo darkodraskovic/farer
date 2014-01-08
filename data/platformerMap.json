@@ -5,6 +5,10 @@
          "height":16,
          "name":"sky",
          "opacity":1,
+         "properties":
+            {
+             "background":"true"
+            },
          "type":"tilelayer",
          "visible":true,
          "width":32,
@@ -16,6 +20,10 @@
          "height":16,
          "name":"stars",
          "opacity":1,
+         "properties":
+            {
+             "background":"true"
+            },
          "type":"tilelayer",
          "visible":true,
          "width":32,
@@ -42,6 +50,10 @@
          "height":16,
          "name":"vegetation",
          "opacity":1,
+         "properties":
+            {
+             "background":"true"
+            },
          "type":"tilelayer",
          "visible":true,
          "width":32,
@@ -54,31 +66,17 @@
          "objects":[
                 {
                  "height":32,
-                 "name":"platform",
+                 "name":"UDplatform",
                  "properties":
                     {
-                     "maxDY":"29",
-                     "vy":"60"
+                     "maxDY":"29.0",
+                     "vy":"60.0"
                     },
                  "type":"",
                  "visible":true,
                  "width":128,
                  "x":32,
                  "y":320
-                }, 
-                {
-                 "height":32,
-                 "name":"platform",
-                 "properties":
-                    {
-                     "maxDX":"64",
-                     "vx":"60"
-                    },
-                 "type":"",
-                 "visible":true,
-                 "width":96,
-                 "x":192,
-                 "y":224
                 }, 
                 {
                  "height":32,
@@ -107,6 +105,20 @@
                  "width":32,
                  "x":256,
                  "y":160
+                }, 
+                {
+                 "height":32,
+                 "name":"LRplatform",
+                 "properties":
+                    {
+                     "maxDX":"32",
+                     "vx":"60.0"
+                    },
+                 "type":"",
+                 "visible":true,
+                 "width":128,
+                 "x":160,
+                 "y":224
                 }],
          "opacity":1,
          "properties":
@@ -129,7 +141,7 @@
  "tilesets":[
         {
          "firstgid":1,
-         "image":"..\/..\/..\/..\/..\/..\/..\/..\/..\/media\/sf_Radovi\/AppDev\/Emacs\/JS\/FromScratch\/Farer\/images\/platformertiles.png",
+         "image":"..\/images\/platformertiles.png",
          "imageheight":96,
          "imagewidth":256,
          "margin":0,
