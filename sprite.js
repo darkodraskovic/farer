@@ -25,7 +25,6 @@ function Sprite(name, x, y, w, h, map) {
     this.frictX = 0;
     this.frictY = 0;
     this.jumpForce = 0;
-    this.movGround = null;
     this.onGround = true;
     this.bounce = -0.5;
     this.rotation = 0;
@@ -67,8 +66,6 @@ function Sprite(name, x, y, w, h, map) {
 	}
 	if (this.jump && this.onGround) {
 	    this.onGround = false;
-	    if (this.movGround)
-		this.movGround = null;
 	    this.vy = -this.jumpForce;
 	}
     };
@@ -91,18 +88,7 @@ function Sprite(name, x, y, w, h, map) {
 
 	// apply the gravity
 	this.vy += this.g;
-	
-	if (this.movGround) {
-	    if (this.x < this.movGround.x - this.w || this.x > this.movGround) {
-		this.vx += this.movGround.vx;
-		this.movGround = null;
-	    }
-	    else {
-		this.x += this.movGround.vx / TPS;
-		this.y += this.movGround.vy / TPS;
-	    }
-	}
-	
+		
 	// update the position
 	this.x += Math.round(this.vx / TPS);
 	this.y += Math.round(this.vy / TPS);

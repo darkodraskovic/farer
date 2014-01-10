@@ -14,7 +14,8 @@ function findSceneryCollisionCandidates(sprite, map) {
     	for (var cols = spriteLeft - 1; cols < spriteRight + 1; cols++) {
     	    for (var rows = spriteTop - 1; rows < spriteBottom + 1; rows++) {
     		if (collisionLayer[cols] && collisionLayer[cols][rows])
-    		    collisionCandidates.push(collisionLayer[cols][rows]);
+		    if (collisionLayer[cols][rows].exists)
+    			collisionCandidates.push(collisionLayer[cols][rows]);
     	    }
     	}
     }
@@ -34,13 +35,8 @@ function testCollisionMask(sprite1, sprite2) {
 function testRectangle(r1, r2, block, bounce)
 {
 
-    if (typeof bounce === "undefined") {
-	bounce = false;
-    }
-
-    if (typeof block === "undefined") {
-	bounce = false;
-    }
+    block = block || false;
+    bounce = bounce || false;
 
     
     //A variable to tell us which side the collision is occurring on

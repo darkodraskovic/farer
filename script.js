@@ -95,12 +95,12 @@ function initializeGame() {
     
     // INIT PLAYER
     topDownPlayer = new TopDownSprite();
-    topDownPlayer.forceX = 1.5;
-    topDownPlayer.forceY = 1.5;
-    topDownPlayer.vxMax = 2.5;
-    topDownPlayer.vyMax = 2.5;
-    topDownPlayer.frictX = 1;
-    topDownPlayer.frictY = 1;    
+    topDownPlayer.forceX = 60;
+    topDownPlayer.forceY = 60;
+    topDownPlayer.vxMax = 120;
+    topDownPlayer.vyMax = 120;
+    topDownPlayer.frictX = 0.92;
+    topDownPlayer.frictY = 0.92;    
     topDownPlayer.x = 312;
     topDownPlayer.y = 312;
     topDownPlayer.w = 12;
@@ -193,28 +193,23 @@ function playGame() {
     var collisionCandidates = findSceneryCollisionCandidates(player, map);
 
     for (var i = 0; i < collisionCandidates.length; i++) {
-    	if (collisionCandidates[i] != null && collisionCandidates[i].exists) {
-    	    var collisionSide = testRectangle(player, collisionCandidates[i], true);
-    	    if (collisionSide !== "none") {
-		// if (collisionCandidates[i]["name"] && collisionCandidates[i]["name"] === "dot") {
-		//     collisionCandidates[i].exists = false;
-		// }
-		if (collisionSide == "bottom" && player.vy >= 0) {
-		    player.onGround = true;
-		    player.vy = -player.g;
-		    player.movGround = null;
-		} else if (collisionSide == "top" && player.vy <= 0) {
-		    player.vy = 0;
-		} else if (collisionSide == "right" && player.vx >= 0) {
-		    player.vx = 0;
-		}  else if (collisionSide == "left" && player.vx <= 0) {
-		    player.vx = 0;
-		}
-		if (collisionSide !== "bottom" && player.vy > 0)  {
-		    player.onGround = false;
-		    if (player.movGround)
-			player.movGround = null;
-		}
+    	var collisionSide = testRectangle(player, collisionCandidates[i], true);
+    	if (collisionSide !== "none") {
+	    if (collisionCandidates[i]["name"] && collisionCandidates[i]["name"] === "dot") {
+	        collisionCandidates[i].exists = false;
+	    }
+	    if (collisionSide == "bottom" && player.vy >= 0) {
+		player.onGround = true;
+		player.vy = -player.g;
+	    } else if (collisionSide == "top" && player.vy <= 0) {
+		player.vy = 0;
+	    } else if (collisionSide == "right" && player.vx >= 0) {
+		player.vx = 0;
+	    }  else if (collisionSide == "left" && player.vx <= 0) {
+		player.vx = 0;
+	    }
+	    if (collisionSide !== "bottom" && player.vy > 0)  {
+		player.onGround = false;
 	    }
     	}
     }
@@ -227,7 +222,6 @@ function playGame() {
     		if (collisionSide !== "none") {
 		    if (collisionSide == "bottom" && player.vy >= 0) {
 			player.onGround = true;
-			player.movGround = objects[j];
 			player.vy = -player.g;
 		    } else if (collisionSide == "top" && player.vy <= 0) {
 			player.vy = 0;
@@ -238,8 +232,6 @@ function playGame() {
 		    }
 		    if (collisionSide !== "bottom" && player.vy > 0)  {
 			player.onGround = false;
-			if (player.movGround)
-			    player.movGround = null;
 		    }
 		}
 	    }
