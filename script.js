@@ -13,57 +13,14 @@ var PLAY_STATE = 2;
 // LOAD
 var gameState = LOAD_STATE;
 
-var camera = {
-    x: 0,
-    y: 0,
-    w: canvas.width,
-    h: canvas.height,
-
-    updateCamera: function(followee, map) {
-	// center the camera on the followee & keep it inside the map boundaries
-	if (followee.x < this.leftInnerBoundary()) {
-	    this.x = Math.max(0, Math.min(
-		Math.floor(followee.x - this.w * 1/4), 
-		map.w - this.w
-	    )); 
-	}
-	if (followee.x + followee.w > this.rightInnerBoundary()) {
-	    this.x = Math.max(0, Math.min(
-		Math.floor(followee.x + followee.w - this.w * 3/4), 
-		map.w - this.w
-	    ));
-	}
-
-	if (followee.y + followee.h > this.bottomInnerBoundary()) {
-	    this.y = Math.max(0, Math.min(
-		Math.floor(followee.y + followee.h - this.h * 3/4),
-		map.h - this.h
-	    )); 
-	} 
-	if (followee.y < this.topInnerBoundary()) {
-	    this.y = Math.max(0, Math.min(
-		Math.floor(followee.y - this.h * 1/4),
-		map.h - this.h
-	    )); 
-	}
-	
-    },
-
-    // The camera's inner boundaries
-    rightInnerBoundary: function() {
-	return this.x + this.w * 3/4;
-    },
-    leftInnerBoundary: function() {
-	return this.x + this.w * 1/4;
-    },
-    topInnerBoundary: function() {
-	return this.y + this.h * 1/4;
-    },
-    bottomInnerBoundary: function() {
-	return this.y + this.h * 3/4;
-    }
-
-};
+window.requestAnimFrame = (function(){
+  return  window.requestAnimationFrame       ||
+          window.webkitRequestAnimationFrame ||
+          window.mozRequestAnimationFrame    ||
+          function( callback ){
+            window.setTimeout(callback, 1000 / 60);
+          };
+})();
 
 var map;
 var player;
@@ -77,6 +34,7 @@ var topDownMap;
 var pacmanMap;
 var pacmanPlayer;
 var pacmanPlayerAnimator;
+var camera;
 
 function initializeGame() {
     // INIT MAP
@@ -111,8 +69,8 @@ function initializeGame() {
     topDownPlayerAnimator.parseImageData();
 
     platformerPlayer = new PlatformerSprite();
-    platformerPlayer.x = platformerMap.tileW * 4;
-    platformerPlayer.y = platformerMap.tileH * 10;
+    platformerPlayer.x = platformerMap.tileW * 6;
+    platformerPlayer.y = platformerMap.tileH * 9;
     platformerPlayer.w = 32;
     platformerPlayer.h = 32;
     platformerPlayer.forceX = 60;
@@ -160,13 +118,15 @@ function initializeGame() {
 	map = pacmanMap;
     }
 
+    // RENDER SETUP
+    camera = new Camera(map);
+
     // INPUT SETUP
     setInput(player);
 
     
     gameState = PLAY_STATE;
     console.log("Playing");
-
 }
 
 
@@ -255,9 +215,10 @@ function playGame() {
 }
 
 var initRunning = false;
+
 // GAME LOOP
 function update() {
-    mozRequestAnimationFrame(update, canvas);
+    requestAnimationFrame(update, canvas);
     switch(gameState) {
     case LOAD_STATE: 
 	break;
@@ -275,19 +236,4 @@ function update() {
 
 update();
 
-// var mode = "platformer";
-// function toggleMode() {
-//     if (mode !== "platformer") {
-// 	mode = "platformer";
-// 	player = platformerPlayer;
-// 	playerAnimator = platformerPlayerAnimator;
-// 	map = platformerMap;
-//     }
-//     else {
-// 	mode = "topdown";
-// 	player = topDownPlayer;
-// 	playerAnimator = topDownPlayerAnimator;
-// 	map = topDownMap;
-//     }
-// }
 

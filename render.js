@@ -1,3 +1,57 @@
+// SETUP CAMERA
+function Camera(map) {
+    this.x = 0;
+    this.y = 0;
+    this.w = canvas.width;
+    this.h = canvas.height,
+
+    this.updateCamera = function(followee, map) {
+	// center the camera on the followee & keep it inside the map boundaries
+	if (followee.x < this.leftInnerBoundary()) {
+	    this.x = Math.max(0, Math.min(
+		Math.floor(followee.x - this.w * 1/4), 
+		map.w - this.w
+	    )); 
+	}
+	if (followee.x + followee.w > this.rightInnerBoundary()) {
+	    this.x = Math.max(0, Math.min(
+		Math.floor(followee.x + followee.w - this.w * 3/4), 
+		map.w - this.w
+	    ));
+	}
+
+	if (followee.y + followee.h > this.bottomInnerBoundary()) {
+	    this.y = Math.max(0, Math.min(
+		Math.floor(followee.y + followee.h - this.h * 3/4),
+		map.h - this.h
+	    )); 
+	} 
+	if (followee.y < this.topInnerBoundary()) {
+	    this.y = Math.max(0, Math.min(
+		Math.floor(followee.y - this.h * 1/4),
+		map.h - this.h
+	    )); 
+	}
+	
+    },
+
+    // The camera's inner boundaries
+    this.rightInnerBoundary = function() {
+	return this.x + this.w * 3/4;
+    },
+    this.leftInnerBoundary = function() {
+	return this.x + this.w * 1/4;
+    },
+    this.topInnerBoundary = function() {
+	return this.y + this.h * 1/4;
+    },
+    this.bottomInnerBoundary = function() {
+	return this.y + this.h * 3/4;
+    }
+
+};
+
+
 // RENDER GAME
 function renderMap(map, player){
     // var offsetX;
